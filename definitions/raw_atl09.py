@@ -12,6 +12,7 @@ class RadiusDuration: pass # defined for type checking reasons
 from sat_val_framework.implement import RawData
 
 import xarray as xr 
+import numpy as np
 import os
 import datetime as dt
 
@@ -27,7 +28,7 @@ _ATL09_required_vars = (
     "surface_sig", "surface_thresh", "surface_height", 
     # TODO: identify others
 )
-
+CONF_DENS_THRESHOLD = 0.4
 
 
 def raw_groups_from_fpath(fpath: str) -> xr.Dataset:
@@ -135,15 +136,37 @@ def rename_atl09_vars_dims(ds: xr.Dataset) -> xr.Dataset:
             })
     )
 
-def set_cloudmask(ds: xr.Dataset) -> xr.Dataset:
+def set_feature_mask(ds: xr.Dataset) -> xr.Dataset:
     data = ds.copy()
-    data["cloudmask"] = (
-        (
-            (data["layer_bot"] <= data["height"]) &
-            (data["layer_top"] >= data["height"])
-        )
-            .any(dim="ds_layers")
+    clouds = (
+        (data["layer_bot"] <= data["height"]) &
+        (data["layer_top"] >= data["height"]) &
+        ( data["layer_attr"].isin([1,]) ) # 1: cloud
+    ).any(dim="ds_layers")
+    aerosols = (
+        (data["layer_bot"] <= data["height"]) &
+        (data["layer_top"] >= data["height"]) &
+        ( data["layer_attr"].isin([2,]) ) # 2: aerosol
+    ).any(dim="ds_layers")
+    attenuated = (
+        (data["surface_sig"] < data["surface_thresh"]) &
+        (data["height"] < data["layer_bot"].min(dim="ds_layers"))
     )
+    
+    feature_mask = xr.zeros_like(clouds, dtype=np.uint8)
+    #NOTE: uint8 only supports 8 unique features
+    features = (clouds, aerosols, attenuated)
+    for i, feature in enumerate(features):
+        feature_mask += (feature * 1<<i).astype(np.uint8)
+
+    feature_mask = feature_mask.assign_attrs(
+        description = """Feature mask from the ATL09 data. Bits are set to indicate the presence of a certain feature in the mask.
+1<<0: Cloud
+1<<1: Aerosol
+1<<2: Attenuation"""
+    )
+
+    data["feature_mask"] = feature_mask
     return data
 
 
@@ -170,7 +193,7 @@ def safe_load_atl09_from_fpath(fpath: str) -> xr.Dataset | None:
     # apply time interpolation and heighht renaming
     data = set_extrapolated_time_as_coords(data)
     data = rename_atl09_vars_dims(data)
-    data = set_cloudmask(data)
+    data = set_feature_mask(data)
     return data
 
 
@@ -218,7 +241,20 @@ class RawATL09(RawData):
         if isinstance(parameters, RadiusDuration):
             raise NotImplementedError() # TODO: need to have a think about how collocation subsetting is handled between events and parameters
 
-
+    def perform_qc(self) -> Self:
+        # in this instance, qc is performed on the featuremask by ensuring that 
+        #raise NotImplementedError()
+        ds = self.data
+        ds["qc_feature_mask"] = xr.where(
+            (
+                (ds["layer_bot"] <= ds["height"]) &
+                (ds["layer_top"] >= ds["height"]) &
+                (ds["layer_conf_dens"] <= CONF_DENS_THRESHOLD)
+            ).any(dim="ds_layers"),
+            0,
+            ds.feature_mask,
+        )
+        return self
 
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
         raise NotImplementedError(f"Type {type(self)} does not implement .homngenise_to(self, H: Type[HomogenisedData])")
