@@ -9,11 +9,13 @@ from sat_val_framework.implement import (
     CollocationParameters, 
     CollocationEvent, 
     CollocationScheme,
+    RawData, # importyed for type hinting
 )
 from sat_val_framework import CollocationEventList
-from .raw_cloudnet import RawCloudnet
-from .raw_atl09 import RawATL09
+from raw_cloudnet import RawCloudnet
+from raw_atl09 import RawATL09
 
+from dataclasses import dataclass
 import datetime as dt
 import os
 
@@ -54,6 +56,7 @@ class RadiusDuration(CollocationParameters):
 
 
 
+@dataclass(frozen=True, kw_only=True)
 class CloudnetEvent(CollocationEvent):
     """Class handling minimum required information to load file containing a collocation event.
 
@@ -66,6 +69,7 @@ class CloudnetEvent(CollocationEvent):
     root_dir: str
     site: str
 
+@dataclass(frozen=True, kw_only=True)
 class ATL09Event(CollocationEvent):
     """Class handling minimum required information to load a file(s) containing a collcoation event
 
@@ -80,6 +84,7 @@ class ATL09Event(CollocationEvent):
     latitude: float | None
     longitude: float | None
 
+@dataclass(frozen=True, kw_only=True)
 class CloudnetATL09Event(CollocationEvent):
     """Class handling a CollocationEvent between Cloudnet and ATL09 data.
 
