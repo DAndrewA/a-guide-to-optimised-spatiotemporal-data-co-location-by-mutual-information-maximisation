@@ -1,12 +1,14 @@
 """Author: Andrew Martin
 Creation date: 22/08/2025
 
-Class definition for RawATL09 to handle data from .h5 files
+Class definition for RawCloudnet to handle raw data from .nc files.
 """
 
 from __future__ import annotations
 
-from .collocation import RadiusDuration
+#from collocation import RadiusDuration
+#TODO: remove cyclic dependency between RadiusDuration and RawCloudnet
+class RadiusDuration: pass # defined for type checking reasons
 from sat_val_framework.implement import RawData
 
 import xarray as xr 
