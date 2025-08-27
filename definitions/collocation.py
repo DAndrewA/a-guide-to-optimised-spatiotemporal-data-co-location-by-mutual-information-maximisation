@@ -157,6 +157,7 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
             # obtain a crude estimate of t_0 from the median time in the ATL09 data
             crude_t0 = raw_atl09.data.time.median()
             cloudnet_fname = RawCloudnet._fname_from_datetime(datetime = crude_t0, site=cloudnet_site)
+            # check file exists during collocation event
             if not os.path.isfile( os.path.join(dir_cloudnet, cloudnet_fname) ):
                 print(f"{cloudnet_fname} not found for ATL09 event")
                 continue
