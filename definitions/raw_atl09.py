@@ -6,11 +6,13 @@ Class definition for RawATL09 to handle data from .h5 files
 
 from __future__ import annotations
 
-#from collocation import RadiusDuration
-#TODO: remove cyclic dependency between RadiusDuration and RawATL09
-class RadiusDuration: pass # defined for type checking reasons
-from sat_val_framework.implement import RawData
+from sat_val_framework.implement import (
+    RawData,
+    RawMetadata,
+    RawDataSubsetter,
+)
 
+from dataclasses import dataclass
 import xarray as xr 
 import numpy as np
 import os
@@ -197,6 +199,64 @@ def safe_load_atl09_from_fpath(fpath: str) -> xr.Dataset | None:
 
 
 
+
+@dataclass(kw_only=True, frozen=True)
+class DistanceFromLocation(RawDataSubsetter):
+    distance_km: float
+    latitude: float
+    longitude: float
+
+    # TODO: decide on a qc threshold
+    MINIMUM_REQUIRED_PROFILES: int = 50
+
+    def _haversine_distance(self, lat_sat, lon_sat, a=6378):
+        """Function to calculate the haversine distance between pairs of latitude and longitude coordinates and a fixed latitude and longitude location (lat0, lon0)
+        NOTE: angles should be provided in decimal degrees
+        NOTE: the value of R defines the units that the result is given in (in units per radian). The default is km along the surface of the Earth.
+        """
+        lat_satr, lon_satr = np.deg2rad(lat_sat), np.deg2rad(lon_sat)
+        lat0r, lon0r = np.deg2rad(self.latitude), np.deg2rad(self.longitude)
+        alphar = np.arccos(
+            np.sin(lat0r) * np.sin(lat_satr) +
+            np.cos(lat0r) * np.cos(lat_satr) * np.cos(lon0r - lon_satr)
+        )
+        s = a * alphar
+        return s
+
+    def subset(self, raw_data: RawATL09) -> RawATL09:
+        stack = {"time_index_profile": ("time_index", "profile")}
+        new_data = raw_data.data.copy().stack(stack)
+        d2s = self._haversine_distance(
+            lat_sat = new_data["latitude"],
+            lon_sat = new_data["longitude"],
+        )
+        print("d2s range:", d2s.min().values, d2s.max().values)
+        valid_subset = d2s <= self.distance_km
+        if sum(valid_subset) < self.MINIMUM_REQUIRED_PROFILES:
+            print("Whelp, this is boring")
+            #raise SubsetError(f"Insufficient profiles for {raw_data.metadata.loader} when subsetting with {self}")
+
+        new_data = new_data.where(valid_subset, drop=True).unstack()
+        # reset the time coordinates, even if data for a given column is null
+        new_data["time"] = new_data.time.interpolate_na(
+            dim="time_index",
+            method="linear",
+            fill_value="extrapolate",
+        )
+        # update metadata to indicate subsetting
+        new_metadata = raw_data.metadata
+        new_metadata.subsetter.append(self)
+
+        return RawATL09(
+            data = new_data,
+            metadata = new_metadata
+        )
+        
+
+
+# include multiple implemented collocation types as a union type, rather than a tuple of types
+ATL09_COLLOCATION_SUBSET_TYPES = (DistanceFromLocation | DistanceFromLocation)
+
 class RawATL09(RawData):
     def assert_on_creation(self):
         # TODO: check dimensions in data
@@ -212,11 +272,27 @@ class RawATL09(RawData):
         data = safe_load_atl09_from_fpath(fpath)
         if fpath is None:
             return None
-        return cls(data=data, metadata=fpath)
+        return cls(
+            data=data, 
+            metadata=RawMetadata(
+                loader = fpath,
+                subsetter = []
+            )
+        )
 
     @classmethod
-    def from_collocation_event_and_parameters(cls, event: CollocationEvent, parameters: CollocationParameters) -> Self | None:
-        assert isinstance(parameters, RadiusDuration | None), f"collocation subsetting of {cls} not implemented for parameter type {type(parameters)}"
+    def from_collocation_event_and_parameters(cls, event: CollocationEvent, parameters: RawDataSubsetter) -> Self | None:
+        assert isinstance(parameters, ATL09_COLLOCATION_SUBSET_TYPES | None), f"collocation subsetting of {cls} not implemented for parameter type {type(parameters)}"
+        
+        metadata = RawMetadata(
+            loader = event,
+            subsetter = [
+                p
+                for p in [parameters]
+                if p is not None
+            ]
+        )
+
         # load the data safely from the 
         atle = event.event_atl09
         individual_data = [
@@ -234,11 +310,11 @@ class RawATL09(RawData):
         )
         
         # apply subsetting based on parameters
+        raw_data_ob = cls(data=data, metadata=metadata)
         if parameters is None:
-            return cls(data=data, metadata=event)
+            return raw_data_ob
+        return parameters.subset(raw_data_ob)
 
-        if isinstance(parameters, RadiusDuration):
-            raise NotImplementedError() # TODO: need to have a think about how collocation subsetting is handled between events and parameters
 
     def perform_qc(self) -> Self:
         # in this instance, qc is performed on the featuremask by ensuring that 
