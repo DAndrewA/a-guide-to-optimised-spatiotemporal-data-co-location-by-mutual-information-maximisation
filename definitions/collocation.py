@@ -12,8 +12,8 @@ from sat_val_framework.implement import (
     RawData, # importyed for type hinting
 )
 from sat_val_framework import CollocationEventList
-from raw_cloudnet import RawCloudnet
-from raw_atl09 import RawATL09
+from raw_cloudnet import RawCloudnet, Duration, CloudnetEvent
+from raw_atl09 import RawATL09, DistanceFromLocation, ATL09Event
 
 from dataclasses import dataclass
 import datetime as dt
@@ -55,34 +55,6 @@ class RadiusDuration(CollocationParameters):
 
 
 
-
-@dataclass(frozen=True, kw_only=True)
-class CloudnetEvent(CollocationEvent):
-    """Class handling minimum required information to load file containing a collocation event.
-
-    ATTRIBUTES:
-        closest_approach_time (dt.datetime): datetime object describing the time of closest approach of ICESat-2 to the Cloudnet site. Used to center the time window that is loaded.
-        root_dir (str): Path of the directory containing the .nc Cloudnet files to be loaded.
-        site (str): Name of the site for which Cloudnet data is loaded. This is used in generating filenames to be loaded.
-    """
-    closest_approach_time: dt.datetime
-    root_dir: str
-    site: str
-
-@dataclass(frozen=True, kw_only=True)
-class ATL09Event(CollocationEvent):
-    """Class handling minimum required information to load a file(s) containing a collcoation event
-
-    ATTRIBUTES:
-        fpath1 (str): fully qualified path to a .h5 file containing ATL09 data to be loaded.
-        fpath2 (str | None) fully qualified path to a .h5 file containing ATL09 data to be loaded. Use in the event that a collocation event spans a granule boundary and is therefore split across files.
-        latitude (float): Latitude in decimal degrees of the associated Cloudnet site.
-        longitude (float): Longitude in decimal degrees of the associated Cloudnet site.
-    """
-    fpath1: str
-    fpath2: str | None
-    latitude: float | None
-    longitude: float | None
 
 @dataclass(frozen=True, kw_only=True)
 class CloudnetATL09Event(CollocationEvent):
