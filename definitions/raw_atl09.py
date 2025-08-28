@@ -224,16 +224,25 @@ class DistanceFromLocation(RawDataSubsetter):
         s = a * alphar
         return s
 
-    def subset(self, raw_data: RawATL09) -> RawATL09:
+
+    def get_distance_to_location(self, raw_data: RawATL09) -> xr.DataArray:
         stack = {"time_index_profile": ("time_index", "profile")}
         new_data = raw_data.data.copy().stack(stack)
         d2s = self._haversine_distance(
             lat_sat = new_data["latitude"],
             lon_sat = new_data["longitude"],
         )
-        print("d2s range:", d2s.min().values, d2s.max().values)
+        return d2s.rename("distance_to_site")
+        
+
+    def subset(self, raw_data: RawATL09) -> RawATL09:
+        stack = {"time_index_profile": ("time_index", "profile")}
+        new_data = raw_data.data.copy().stack(stack)
+        d2s = self.get_distance_to_location(raw_data)
+        #print("d2s range:", d2s.min().values, d2s.max().values)
         valid_subset = d2s <= self.distance_km
         if sum(valid_subset) < self.MINIMUM_REQUIRED_PROFILES:
+            #TODO: implement a subsetting error
             print("Whelp, this is boring")
             #raise SubsetError(f"Insufficient profiles for {raw_data.metadata.loader} when subsetting with {self}")
 
