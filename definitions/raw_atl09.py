@@ -7,12 +7,13 @@ Class definition for RawATL09 to handle data from .h5 files
 from __future__ import annotations
 
 from sat_val_framework.implement import (
+    RawDataSubsetter,
+    RawDataEvent, 
     RawData,
     RawMetadata,
-    RawDataSubsetter,
-    CollocationEvent, 
 )
 
+from typing import ClassVar
 from dataclasses import dataclass
 import xarray as xr 
 import numpy as np
@@ -200,90 +201,6 @@ def safe_load_atl09_from_fpath(fpath: str) -> xr.Dataset | None:
 
 
 
-
-@dataclass(kw_only=True, frozen=True)
-class DistanceFromLocation(RawDataSubsetter):
-    distance_km: float
-    latitude: float
-    longitude: float
-
-    # TODO: decide on a qc threshold
-    MINIMUM_REQUIRED_PROFILES: int = 50
-
-    def _haversine_distance(self, lat_sat, lon_sat, a=6378):
-        """Function to calculate the haversine distance between pairs of latitude and longitude coordinates and a fixed latitude and longitude location (lat0, lon0)
-        NOTE: angles should be provided in decimal degrees
-        NOTE: the value of R defines the units that the result is given in (in units per radian). The default is km along the surface of the Earth.
-        """
-        lat_satr, lon_satr = np.deg2rad(lat_sat), np.deg2rad(lon_sat)
-        lat0r, lon0r = np.deg2rad(self.latitude), np.deg2rad(self.longitude)
-        alphar = np.arccos(
-            np.sin(lat0r) * np.sin(lat_satr) +
-            np.cos(lat0r) * np.cos(lat_satr) * np.cos(lon0r - lon_satr)
-        )
-        s = a * alphar
-        return s
-
-
-    def get_distance_to_location(self, raw_data: RawATL09) -> xr.DataArray:
-        stack = {"time_index_profile": ("time_index", "profile")}
-        new_data = raw_data.data.copy().stack(stack)
-        d2s = self._haversine_distance(
-            lat_sat = new_data["latitude"],
-            lon_sat = new_data["longitude"],
-        )
-        return d2s.rename("distance_to_site")
-        
-
-    def subset(self, raw_data: RawATL09) -> RawATL09:
-        stack = {"time_index_profile": ("time_index", "profile")}
-        new_data = raw_data.data.copy().stack(stack)
-        d2s = self.get_distance_to_location(raw_data)
-        #print("d2s range:", d2s.min().values, d2s.max().values)
-        valid_subset = d2s <= self.distance_km
-        if sum(valid_subset) < self.MINIMUM_REQUIRED_PROFILES:
-            #TODO: implement a subsetting error
-            print("Whelp, this is boring")
-            #raise SubsetError(f"Insufficient profiles for {raw_data.metadata.loader} when subsetting with {self}")
-
-        new_data = new_data.where(valid_subset, drop=True).unstack()
-        # reset the time coordinates, even if data for a given column is null
-        new_data["time"] = new_data.time.interpolate_na(
-            dim="time_index",
-            method="linear",
-            fill_value="extrapolate",
-        )
-        # update metadata to indicate subsetting
-        new_metadata = raw_data.metadata
-        new_metadata.subsetter.append(self)
-
-        return RawATL09(
-            data = new_data,
-            metadata = new_metadata
-        )
-        
-
-
-@dataclass(frozen=True, kw_only=True)
-class ATL09Event(CollocationEvent):
-    """Class handling minimum required information to load a file(s) containing a collcoation event
-
-    ATTRIBUTES:
-        fpath1 (str): fully qualified path to a .h5 file containing ATL09 data to be loaded.
-        fpath2 (str | None) fully qualified path to a .h5 file containing ATL09 data to be loaded. Use in the event that a collocation event spans a granule boundary and is therefore split across files.
-        latitude (float): Latitude in decimal degrees of the associated Cloudnet site.
-        longitude (float): Longitude in decimal degrees of the associated Cloudnet site.
-    """
-    fpath1: str
-    fpath2: str | None
-    latitude: float | None
-    longitude: float | None
-
-
-
-# include multiple implemented collocation types as a union type, rather than a tuple of types
-ATL09_COLLOCATION_SUBSET_TYPES = (DistanceFromLocation | DistanceFromLocation)
-
 class RawATL09(RawData):
     def assert_on_creation(self):
         # TODO: check dimensions in data
@@ -356,3 +273,92 @@ class RawATL09(RawData):
 
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
         raise NotImplementedError(f"Type {type(self)} does not implement .homngenise_to(self, H: Type[HomogenisedData])")
+
+
+
+@dataclass(kw_only=True, frozen=True)
+class DistanceFromLocation(RawDataSubsetter):
+    RDT: ClassVar = RawATL09
+    distance_km: float
+    latitude: float
+    longitude: float
+
+    # TODO: decide on a qc threshold
+    MINIMUM_REQUIRED_PROFILES: int = 50
+
+    def _haversine_distance(self, lat_sat, lon_sat, a=6378):
+        """Function to calculate the haversine distance between pairs of latitude and longitude coordinates and a fixed latitude and longitude location (lat0, lon0)
+        NOTE: angles should be provided in decimal degrees
+        NOTE: the value of R defines the units that the result is given in (in units per radian). The default is km along the surface of the Earth.
+        """
+        lat_satr, lon_satr = np.deg2rad(lat_sat), np.deg2rad(lon_sat)
+        lat0r, lon0r = np.deg2rad(self.latitude), np.deg2rad(self.longitude)
+        alphar = np.arccos(
+            np.sin(lat0r) * np.sin(lat_satr) +
+            np.cos(lat0r) * np.cos(lat_satr) * np.cos(lon0r - lon_satr)
+        )
+        s = a * alphar
+        return s
+
+
+    def get_distance_to_location(self, raw_data: RawATL09) -> xr.DataArray:
+        stack = {"time_index_profile": ("time_index", "profile")}
+        new_data = raw_data.data.copy().stack(stack)
+        d2s = self._haversine_distance(
+            lat_sat = new_data["latitude"],
+            lon_sat = new_data["longitude"],
+        )
+        return d2s.rename("distance_to_site")
+        
+
+    def subset(self, raw_data: RawATL09) -> RawATL09:
+        stack = {"time_index_profile": ("time_index", "profile")}
+        new_data = raw_data.data.copy().stack(stack)
+        d2s = self.get_distance_to_location(raw_data)
+        #print("d2s range:", d2s.min().values, d2s.max().values)
+        valid_subset = d2s <= self.distance_km
+        if sum(valid_subset) < self.MINIMUM_REQUIRED_PROFILES:
+            #TODO: implement a subsetting error
+            print("Whelp, this is boring")
+            #raise SubsetError(f"Insufficient profiles for {raw_data.metadata.loader} when subsetting with {self}")
+
+        new_data = new_data.where(valid_subset, drop=True).unstack()
+        # reset the time coordinates, even if data for a given column is null
+        new_data["time"] = new_data.time.interpolate_na(
+            dim="time_index",
+            method="linear",
+            fill_value="extrapolate",
+        )
+        # update metadata to indicate subsetting
+        new_metadata = raw_data.metadata
+        new_metadata.subsetter.append(self)
+
+        return RawATL09(
+            data = new_data,
+            metadata = new_metadata
+        )
+        
+
+
+@dataclass(frozen=True, kw_only=True)
+class ATL09Event(RawDataEvent):
+    """Class handling minimum required information to load a file(s) containing a collcoation event
+
+    ATTRIBUTES:
+        fpath1 (str): fully qualified path to a .h5 file containing ATL09 data to be loaded.
+        fpath2 (str | None) fully qualified path to a .h5 file containing ATL09 data to be loaded. Use in the event that a collocation event spans a granule boundary and is therefore split across files.
+        latitude (float): Latitude in decimal degrees of the associated Cloudnet site.
+        longitude (float): Longitude in decimal degrees of the associated Cloudnet site.
+    """
+    RDT: ClassVar = RawATL09
+    fpath1: str
+    fpath2: str | None
+    latitude: float | None
+    longitude: float | None
+
+
+
+#NOTE: at bottom of file so that RawATL09 can be defined before DistanceFromLocation and ATL09Event require it in their definitions, but so that DistanceFromLocation can be defined before ATL09_COLLOCATION_SUBSET_TYPES
+# include multiple implemented collocation types as a union type, rather than a tuple of types
+ATL09_COLLOCATION_SUBSET_TYPES = (DistanceFromLocation | DistanceFromLocation)
+

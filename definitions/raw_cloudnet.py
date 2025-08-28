@@ -10,11 +10,12 @@ from sat_val_framework.implement import (
     RawData,
     RawMetadata,
     RawDataSubsetter,
-    CollocationEvent,
+    RawDataEvent,
 )
 
 import cloudnet_decode
 
+from typing import ClassVar
 from dataclasses import dataclass
 from pandas import Timestamp
 import xarray as xr 
@@ -57,79 +58,6 @@ def _include_cloudnet_cloudmask(ds: xr.Dataset) -> xr.Dataset:
         data.liq | (data.falling & data.cold)
     ).rename("cloudmask")
     return data
-
-
-
-@dataclass(kw_only=True, frozen=True)
-class Duration(RawDataSubsetter):
-    duration: dt.timedelta
-
-    def subset(self, raw_data: RawCloudnet) -> RawCloudnet:
-        new_data = raw_data.data.copy()
-        new_metadata = raw_data.metadata
-        # if no closest approach time is known, cannot subset by window centered on it
-        if not isinstance(new_metadata.loader, CloudnetEvent):
-            print(new_metadata, self, f"No closest approach time known, so no subsetting")
-            return raw_data
-
-        new_metadata.subsetter.append(self)
-
-        center = new_metadata.loader.closest_approach_time
-        tslice = slice(
-            center - 0.5*self.duration,
-            center + 0.5*self.duration
-        )
-        # see if more data needs loading or if current spans sufficient time
-        min_time = Timestamp(new_data.time.min().values).to_pydatetime()
-        max_time = Timestamp(new_data.time.max().values).to_pydatetime()
-        tslice_in_time_range = (
-            (tslice.start >= min_time) &
-            (tslice.stop <= max_time)
-        )
-        if tslice_in_time_range:
-            new_data = new_data.sel(time=tslice)
-            return RawCloudnet(
-                data = new_data,
-                metadata = new_metadata
-            )
-        # if full time slice not already contained, load more data!
-        dates_to_load = _dates_from_time_slice(tslice)
-        fpaths = [
-            os.path.join(
-                new_metadata.loader.root_dir,
-                RawCloudnet._fname_from_datetime(
-                    datetime = date,
-                    site = new_metadata.loader.site
-                )
-            )
-            for date in dates_to_load
-        ]
-        new_data = xr.concat(
-            [
-                _load_cloudnet_from_file(fpath)
-                for fpath in fpaths
-            ],
-            dim="time"
-        ).sel(time=tslice)
-        return RawCloudnet(
-            data = new_data,
-            metadata = new_metadata
-        )
-
-
-
-@dataclass(frozen=True, kw_only=True)
-class CloudnetEvent(CollocationEvent):
-    """Class handling minimum required information to load file containing a collocation event.
-
-    ATTRIBUTES:
-        closest_approach_time (dt.datetime): datetime object describing the time of closest approach of ICESat-2 to the Cloudnet site. Used to center the time window that is loaded.
-        root_dir (str): Path of the directory containing the .nc Cloudnet files to be loaded.
-        site (str): Name of the site for which Cloudnet data is loaded. This is used in generating filenames to be loaded.
-    """
-    closest_approach_time: dt.datetime
-    root_dir: str
-    site: str
 
 
 
@@ -195,3 +123,79 @@ class RawCloudnet(RawData):
         if site == "summit":
             fname = "{datetime:%Y%m%d}_categorize.nc"
         return fname
+
+
+
+@dataclass(kw_only=True, frozen=True)
+class Duration(RawDataSubsetter):
+    RDT: ClassVar = RawCloudnet
+    duration: dt.timedelta
+
+    def subset(self, raw_data: RawCloudnet) -> RawCloudnet:
+        new_data = raw_data.data.copy()
+        new_metadata = raw_data.metadata
+        # if no closest approach time is known, cannot subset by window centered on it
+        if not isinstance(new_metadata.loader, CloudnetEvent):
+            print(new_metadata, self, f"No closest approach time known, so no subsetting")
+            return raw_data
+
+        new_metadata.subsetter.append(self)
+
+        center = new_metadata.loader.closest_approach_time
+        tslice = slice(
+            center - 0.5*self.duration,
+            center + 0.5*self.duration
+        )
+        # see if more data needs loading or if current spans sufficient time
+        min_time = Timestamp(new_data.time.min().values).to_pydatetime()
+        max_time = Timestamp(new_data.time.max().values).to_pydatetime()
+        tslice_in_time_range = (
+            (tslice.start >= min_time) &
+            (tslice.stop <= max_time)
+        )
+        if tslice_in_time_range:
+            new_data = new_data.sel(time=tslice)
+            return RawCloudnet(
+                data = new_data,
+                metadata = new_metadata
+            )
+        # if full time slice not already contained, load more data!
+        dates_to_load = _dates_from_time_slice(tslice)
+        fpaths = [
+            os.path.join(
+                new_metadata.loader.root_dir,
+                RawCloudnet._fname_from_datetime(
+                    datetime = date,
+                    site = new_metadata.loader.site
+                )
+            )
+            for date in dates_to_load
+        ]
+        new_data = xr.concat(
+            [
+                _load_cloudnet_from_file(fpath)
+                for fpath in fpaths
+            ],
+            dim="time"
+        ).sel(time=tslice)
+        return RawCloudnet(
+            data = new_data,
+            metadata = new_metadata
+        )
+
+
+
+@dataclass(frozen=True, kw_only=True)
+class CloudnetEvent(RawDataEvent):
+    """Class handling minimum required information to load file containing a collocation event.
+
+    ATTRIBUTES:
+        closest_approach_time (dt.datetime): datetime object describing the time of closest approach of ICESat-2 to the Cloudnet site. Used to center the time window that is loaded.
+        root_dir (str): Path of the directory containing the .nc Cloudnet files to be loaded.
+        site (str): Name of the site for which Cloudnet data is loaded. This is used in generating filenames to be loaded.
+    """
+    RDT: ClassVar = RawCloudnet
+    closest_approach_time: dt.datetime
+    root_dir: str
+    site: str
+
