@@ -10,6 +10,7 @@ from sat_val_framework.implement import (
     RawData,
     RawMetadata,
     RawDataSubsetter,
+    CollocationEvent, 
 )
 
 from dataclasses import dataclass
@@ -254,6 +255,23 @@ class DistanceFromLocation(RawDataSubsetter):
         
 
 
+@dataclass(frozen=True, kw_only=True)
+class ATL09Event(CollocationEvent):
+    """Class handling minimum required information to load a file(s) containing a collcoation event
+
+    ATTRIBUTES:
+        fpath1 (str): fully qualified path to a .h5 file containing ATL09 data to be loaded.
+        fpath2 (str | None) fully qualified path to a .h5 file containing ATL09 data to be loaded. Use in the event that a collocation event spans a granule boundary and is therefore split across files.
+        latitude (float): Latitude in decimal degrees of the associated Cloudnet site.
+        longitude (float): Longitude in decimal degrees of the associated Cloudnet site.
+    """
+    fpath1: str
+    fpath2: str | None
+    latitude: float | None
+    longitude: float | None
+
+
+
 # include multiple implemented collocation types as a union type, rather than a tuple of types
 ATL09_COLLOCATION_SUBSET_TYPES = (DistanceFromLocation | DistanceFromLocation)
 
@@ -281,28 +299,24 @@ class RawATL09(RawData):
         )
 
     @classmethod
-    def from_collocation_event_and_parameters(cls, event: CollocationEvent, parameters: RawDataSubsetter) -> Self | None:
+    def from_collocation_event_and_parameters(cls, event: ATL09Event, parameters: RawDataSubsetter) -> Self | None:
+        assert isinstance(event, ATL09Event), f"{type(event)=} must be ATL09 event"
         assert isinstance(parameters, ATL09_COLLOCATION_SUBSET_TYPES | None), f"collocation subsetting of {cls} not implemented for parameter type {type(parameters)}"
         
         metadata = RawMetadata(
             loader = event,
-            subsetter = [
-                p
-                for p in [parameters]
-                if p is not None
-            ]
+            subsetter = list()
         )
 
         # load the data safely from the 
-        atle = event.event_atl09
         individual_data = [
             data
-            for fpath in (atle.fpath1, atle.fpath2)
+            for fpath in (event.fpath1, event.fpath2)
             if fpath is not None
             if (data := safe_load_atl09_from_fpath(fpath)) is not None
         ]
         if not individual_data:
-            print(f"No data available for event={atle}")
+            print(f"No data available for event={event}")
             return None
         data = xr.combine_nested(
             individual_data,
