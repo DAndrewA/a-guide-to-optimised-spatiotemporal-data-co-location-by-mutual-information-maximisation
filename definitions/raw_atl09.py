@@ -111,14 +111,13 @@ def set_extrapolated_time_as_coords(ds: xr.Dataset) -> xr.Dataset:
     return (
         ds
             .assign_coords(
-                {"time_index": 
+                {"time": 
                     (ds.delta_time
                         .interpolate_na(
                             dim="time_index", 
                             method="linear", 
                             fill_value="extrapolate"
                         )
-                        
                     )
                 }
             )
@@ -131,7 +130,7 @@ def rename_atl09_vars_dims(ds: xr.Dataset) -> xr.Dataset:
                 "ds_va_bin_h": "height",
             })
             .rename({
-                "delta_time": "time",
+                #"delta_time": "time",
                 "ds_va_bin_h": "height"
             })
     )
