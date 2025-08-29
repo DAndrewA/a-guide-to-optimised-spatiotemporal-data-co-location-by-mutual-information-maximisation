@@ -15,6 +15,7 @@ from sat_val_framework.implement import (
 
 from typing import ClassVar
 from dataclasses import dataclass
+from pandas import Timestamp
 import xarray as xr 
 import numpy as np
 import os
@@ -310,6 +311,12 @@ class DistanceFromLocation(RawDataSubsetter):
         )
         return d2s.rename("distance_to_site")
         
+    def get_time_closest_approach(self, raw_data: RawATL09) -> dt.datetime:
+        d2s = self.get_distance_to_location(raw_data)
+        t0_dt64 = d2s.time.isel(
+            time_index_profile = d2s.argmin()
+        ).values
+        return Timestamp(t0_dt64).to_pydatetime()
 
     def subset(self, raw_data: RawATL09) -> RawATL09:
         stack = {"time_index_profile": ("time_index", "profile")}
@@ -353,8 +360,6 @@ class ATL09Event(RawDataEvent):
     RDT: ClassVar = RawATL09
     fpath1: str
     fpath2: str | None
-    latitude: float | None
-    longitude: float | None
 
 
 
