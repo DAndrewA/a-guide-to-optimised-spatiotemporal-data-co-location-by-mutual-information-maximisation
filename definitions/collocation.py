@@ -13,8 +13,8 @@ from sat_val_framework.implement import (
 )
 
 from sat_val_framework import CollocationEventList
-from raw_cloudnet import RawCloudnet, Duration, CloudnetEvent
-from raw_atl09 import RawATL09, DistanceFromLocation, ATL09Event
+from .raw_cloudnet import RawCloudnet, Duration, CloudnetEvent
+from .raw_atl09 import RawATL09, DistanceFromLocation, ATL09Event
 
 from dataclasses import dataclass
 from pandas import Timestamp

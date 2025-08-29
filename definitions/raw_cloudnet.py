@@ -13,7 +13,7 @@ from sat_val_framework.implement import (
     RawDataEvent,
 )
 
-import cloudnet_decode
+from . import cloudnet_decode
 
 from typing import ClassVar
 from dataclasses import dataclass
