@@ -280,7 +280,7 @@ class RawATL09(RawData):
         vertical_cloud_fraction = (
             (self.data.feature_mask == 1)
                 .mean(dim=["time_index","profile"])
-                .interp_like(H.CG.height)
+                .interp_like(H.CG.lin_interp_z)
                 .rename("VCF")
         )
         return H(

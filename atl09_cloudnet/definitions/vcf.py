@@ -25,6 +25,7 @@ class CommonGrid:
 
         self.lin_interp_z = xr.DataArray(
             data=z_values,
+            coords={"height":(("height",), z_values)},
             dims=("height"),
             name="height"
         )
@@ -32,11 +33,11 @@ class CommonGrid:
 
 
 class VCF(HomogenisedData):
-    CG: CommonGrid
+    CG: CommonGrid = None
 
     def assert_on_creation(self):
         assert isinstance(self.data, xr.DataArray), f"homogenised data should be {xr.DataArray}, is type(self.data)"
-        assert (self.data.height == CG.height).all(), f"Homogenised VCF height coordinates should match common grid"
+        assert (self.data.height == self.CG.z_values).all(), f"Homogenised VCF height coordinates should match common grid"
         assert (
             (self.data >= 0).all() &
             (self.data <= 1).all()
@@ -46,7 +47,7 @@ class VCF(HomogenisedData):
 
 
 class VCF_240m(VCF):
-    CG = CommonGrid(
+    CG: CommonGrid = CommonGrid(
         z_values = np.arange(0, 12_000, 240),
         z_min = -100,
         z_max = 12_100
