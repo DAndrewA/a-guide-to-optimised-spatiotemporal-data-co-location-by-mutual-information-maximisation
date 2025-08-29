@@ -11,8 +11,6 @@ from dataclasses import dataclass
 import os
 
 
-SLICE_SIZE = 120
-
 SCHEME = SchemeCloudnetATL09RadiusDuration(
     R_max_km=150
 )
@@ -25,7 +23,8 @@ class Args:
     dir_cloudnet: str
     site: str
     output_dir: str
-    job_array_index: int | None
+    job_array_index: int
+    slice_length: int = 120
     R_min_km: float = 150
     minimum_required_profiles_within_R: int = 17
 
@@ -70,6 +69,13 @@ def parse_args() -> None | Args:
         help='Job array index'
     )
 
+    parser.add_argument(
+        '--slice-length',
+        type=int,
+        default = 120,
+        help='Number of ATL09 files to be processed'
+    )
+
     # Arguments with default values
     parser.add_argument(
         '--R-min-km',
@@ -85,7 +91,7 @@ def parse_args() -> None | Args:
         help='Minimum required profiles within radius (default: 17)'
     )
 
-    parsed_args = parser.parse_args(args)
+    parsed_args = parser.parse_args()
 
     # Convert argparse Namespace to Args dataclass
     # Note: argparse uses dashes, but dataclass uses underscores
@@ -96,8 +102,9 @@ def parse_args() -> None | Args:
         dir_atl09=parsed_args.dir_atl09,
         dir_cloudnet=parsed_args.dir_cloudnet,
         site=parsed_args.site,
-        output_dir=args.output_dir,
+        output_dir=parsed_args.output_dir,
         job_array_index=parsed_args.job_array_index,
+        slice_length = parsed_args.slice_length,
         R_min_km=parsed_args.R_min_km,
         minimum_required_profiles_within_R=parsed_args.minimum_required_profiles_within_R
     )
@@ -107,6 +114,7 @@ def parse_args() -> None | Args:
 def main(args: Args):
     """Function that, given the ATL09 directory, indices for which files should be selected, Cloudnet directory and site, and output locations, finds the collocation events between ATL09 and Cloudnet data, and saves the collocation event lists to dedicated pickle files.
     """
+    SLICE_SIZE = args.slice_length
     atl09_indices = slice(
         SLICE_SIZE * args.job_array_index,
         SLICE_SIZE * (args.job_array_index + 1)
@@ -126,7 +134,7 @@ def main(args: Args):
     collocation_event_list = SCHEME.get_matches_from_fpath_lists(
         file_list_atl09 = fpaths_atl09,
         dir_cloudnet = args.dir_cloudnet,
-        site_cloudnet = args.site
+        cloudnet_site = args.site
     )
 
     print(f"{len(collocation_event_list)} collocation events found:")
@@ -144,5 +152,6 @@ def main(args: Args):
 
 if __name__ == "__main__":
     args = parse_args()
+    print(args)
     main(args=args)
     print("SCRIPT SUCCESS")
