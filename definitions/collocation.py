@@ -6,16 +6,18 @@ Class definitions for RadiusDuration, ATL09Event, CloudnetEvent, CloudnetATL09Ev
 
 
 from sat_val_framework.implement import (
-    CollocationParameters, 
+    JointParameters, 
     CollocationEvent, 
     CollocationScheme,
     RawData, # importyed for type hinting
 )
+
 from sat_val_framework import CollocationEventList
 from raw_cloudnet import RawCloudnet, Duration, CloudnetEvent
 from raw_atl09 import RawATL09, DistanceFromLocation, ATL09Event
 
 from dataclasses import dataclass
+from pandas import Timestamp
 import datetime as dt
 import os
 
@@ -32,52 +34,28 @@ def _one_of_each_raw_type(raw_data1, raw_data2) -> bool:
     ])
     return both_types_included
 
-class RadiusDuration(CollocationParameters):
-    radius_km: float
-    tau: dt.timedelta
-    longitude: float
-    latitude: float
-
-    def apply_collocation_subsetting(self, raw_data: RawData) -> RawData:
-        if isinstance(raw_data, RawCloudnet):
-            # TODO: subset based on temporal criteria
-            pass
-        elif isinstance(raw_data, RawATL09):
-            # TODO: subset based on spatial criteria
-            pass
-        else:
-            raise TypeError(f"{type(raw_data)} is not of type RawATL09 or RawCloudnet")
-        return raw_data
-
-    @staticmethod
-    def calculate_collocation_criteria(raw_data1: RawData, raw_data2: RawData) -> tuple[RawData, RawData]:
-        raise NotImplementedError(f"Type {type(self)} does not implement .calculate_collocation_criteria(self, raw_data1: RawData, raw_data2: RawData)")
 
 
+class RadiusDuration(JointParameters):
+    RAW_DATA_TYPES = (RawATL09, RawCloudnet)
+    
 
 
-@dataclass(frozen=True, kw_only=True)
-class CloudnetATL09Event(CollocationEvent):
-    """Class handling a CollocationEvent between Cloudnet and ATL09 data.
-
-    ATTRIBUTES:
-        event_atl09 (ATL09Event): The information required to load ATL09 data associated with the given collocation event.
-        event_cloudnet (CloudnetEvent): The information required to load Cloudnet data associated with the given collocation event.
-    """
-    event_atl09: ATL09Event
-    event_cloudnet: CloudnetEvent
+class CollocationCloudnetATL09(CollocationEvent):
+    """Class handling collocation event between ICESat-2 ATL09 and Cloudnet data."""
 
 
 
 def _are_atl09_orbits_subsequent(fname1: str, fname2: str) -> bool:
     """Returns True if the filenames associated with ATL09 data are from subsequent orbits"""
+    # processed_ATL09_20190126121018_04440201_006_02.h5
+    #                           rgt -^^^^
+    #                             cycle -^^
     __, __, __, rgt_cycle1, __, __ = fname1.split("_")
     __, __, __, rgt_cycle2, __, __ = fname2.split("_")
     rgt1, cycle1 = int(rgt_cycle1[:4]), int(rgt_cycle1[4:6])
     rgt2, cycle2 = int(rgt_cycle2[:4]), int(rgt_cycle2[4:6])
 
-
-    processed_ATL09_20190126121018_04440201_006_02.h5
 
     condition1 = (cycle1 == cycle2) and (rgt1 + 1 == rgt2)
     condition2 = (cycle1 + 1 == cycle2) and (rgt1 == 1387) and (rgt2 == 1)
@@ -85,6 +63,7 @@ def _are_atl09_orbits_subsequent(fname1: str, fname2: str) -> bool:
 
 
 
+@dataclass(kw_only=True, frozen=True)
 class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
     """Collocation scheme to find collocation events between Cloudnet and ATL09 data, based on a radius-duration scheme.
     The radius-duration scheme is described by selecting ATL09 data that falls within a given radius R of the Cloudnet site, and selecting Cloudnet data within a temporal window of duration tau, centered on the time of closest approach.
@@ -92,10 +71,11 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
     STATIC METHODS:
         get_matches_from_raw_directories(file_list_atl09: list[str], file_list_cloudnet: list[str]) -> CollocationEventList: from a provided list of ATL09 files and Cloudnet files, identifies all available matches and returns a list of CloudnetATL09Event instances.
     """
+    R_max_km: float
+    min_required_atl09_profiles: int = 17 # floor (5 km of required data) / (0.28 km per profile)
 
-    @staticmethod
-    def get_matches_from_raw_directories(file_list_atl09: list[str], dir_cloudnet: str, cloudnet_site: str) -> CollocationEventList:
-        """From a provided list of ATL09 files and Cloudnet directory and sitename, identifies all available matches and returns a list of CloudnetATL09Event instances. 
+    def get_matches_from_fpath_lists(self, file_list_atl09: list[str], dir_cloudnet: str, cloudnet_site: str) -> CollocationEventList:
+        """From lists of file paths for ATL09 and Cloudnet data, identify collocation events and store the information using CollocationCloudnetATL09 instance
         
         The premise for determining if an ATL09 collocation event is spread across multiple files is that, typically, for a randomly placed event, the granule will not be split and therefore all data will be obtained from a single file.
         However, in the event that a Cloudnet site is close to a granule-change latitude, then data will be split across files with subsequent orbit numbers.
@@ -104,17 +84,17 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
         """
         skip_this_one = False
         event_list = list()
+
         for (fname_atl1, fname_atl2) in zip(file_list_atl09, file_list_atl09[1:] + [None]):
             if skip_this_one or fname_atl1 is None:
                 # skip this one will be set if subsequent files are used for a collocation event
                 skip_this_one = False
                 continue
+            print(f"Finding collocation for {fname_atl1}")
             
             atl09_event_args = {
                 "fpath1": fname_atl1, 
                 "fpath2": None,
-                "latitude": None,
-                "longitude": None,
             }
             if fname_atl2 is not None:
                 if _are_atl09_orbits_subsequent(fname_atl1, fname_atl2):
@@ -130,13 +110,16 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
                 event = atl09_event, 
                 parameters = None
             )
+            if raw_atl09 is None:
+                print(f"No data loaded, REJECTING")
+                continue
             
             # obtain a crude estimate of t_0 from the median time in the ATL09 data
-            crude_t0 = raw_atl09.data.time.median()
+            crude_t0 = Timestamp(raw_atl09.data.time.mean().values).to_pydatetime()
             cloudnet_fname = RawCloudnet._fname_from_datetime(datetime = crude_t0, site=cloudnet_site)
             # check file exists during collocation event
             if not os.path.isfile( os.path.join(dir_cloudnet, cloudnet_fname) ):
-                print(f"{cloudnet_fname} not found for ATL09 event")
+                print(f"{cloudnet_fname} not found for ATL09 event, REJECTING")
                 continue
             cloudnet_event_args = {
                 "root_dir": dir_cloudnet,
@@ -145,42 +128,40 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
             }
 
             # load the Cloudnet data using the crude t_0 value.
-            # NOTE: this only produces minor errors for collocation events +-5 minutes around midnight (i.e. 0.7% of cases assuming random uniform distribution of local overpass times.)
+            # NOTE: may produces minor errors for collocation events +-5 minutes around midnight (i.e. 0.7% of cases assuming random uniform distribution of local overpass times.)
             crude_cloudnet_event = CloudnetEvent(
                 **cloudnet_event_args
             )
             crude_raw_cloudnet = RawCloudnet.from_collocation_event_and_parameters(
-                event = cloudnet_event,
+                event = crude_cloudnet_event,
                 parameters = None 
             )
-
-            # RadiusDuration implements calculating the collocation criteria from RawData instances
-            # TODO: consolidate call signature for calculate_collocation_criteria, either change calling here, or signature definition
-            raw_atl09, crude_raw_cloudnet = RadiusDuration.calculate_collocation_criteria(
-                raw_atl09 = raw_atl09,
-                raw_cloudnet = crude_raw_cloudnet,
-            )
             
-            # TODO: how am I going to consider RVPolarstern as a moving platform?
-            atl09_event_args.update(
-                latitude = crude_raw_cloudnet.data.latitude.mean(), 
-                longitude = crude_raw_cloudnet.data.longitude.mean()
+            d2s_finder = DistanceFromLocation(
+                distance_km=self.R_max_km,
+                longitude = crude_raw_cloudnet.data.longitude.mean().values,
+                latitude = crude_raw_cloudnet.data.latitude.mean().values
             )
+            t0 = d2s_finder.get_time_closest_approach(raw_atl09)
+            d2s = d2s_finder.get_distance_to_location(raw_atl09)
+            # if there are insufficient profiles
+            if (d2s <= self.R_max_km).sum() < self.min_required_atl09_profiles:
+                print(f"{atl09_event=} has fewer than {self.min_required_atl09_profiles} profiles within {self.R_max_km} km of {cloudnet_site}. REJECTING")
+                continue
+
+            
+            
             cloudnet_event_args.update(
-                closest_approach_time = (
-                    raw_atl09["time"]
-                        .isel(
-                            raw_atl09["distance_to_site"].argmin(dims="...", skipna=True)
-                        )
-                        .median()
-                )
+                closest_approach_time = t0
             )
-            event_list.append(
-                CloudnetATL09Event(
-                    atl09_event = ATL09Event(**atl09_event_args),
-                    cloudnet_event = CloudnetEvent(**cloudnet_event_args)
-                )
-            )
+
+            collocation_event = CollocationEvent({
+                RawATL09: ATL09Event(**atl09_event_args),
+                RawCloudnet: CloudnetEvent(**cloudnet_event_args)
+            })
+            print("EVENT FOUND:",collocation_event)
+
+            event_list.append(collocation_event)
 
         # after all ATL09 filenames are checked:
         return CollocationEventList(
