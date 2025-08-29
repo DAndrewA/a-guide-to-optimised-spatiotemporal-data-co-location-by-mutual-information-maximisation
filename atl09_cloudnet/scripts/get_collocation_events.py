@@ -5,7 +5,7 @@ Script to handle finding collocation events between ATL09 and Cloudnet data.
 """
 
 
-from definitions.collocation import SchemeCloudnetATL09RadiusDuration
+from ..definitions.collocation import SchemeCloudnetATL09RadiusDuration
 
 from dataclasses import dataclass
 import os
@@ -128,6 +128,7 @@ def main(args: Args):
     if not fpaths_atl09:
         print(f"No ATL09 files found for indices {atl09_indices} in directory {args.dir_atl09}.")
         print("TERMINATING")
+        return
 
     print(f"Finding collocation events for {fpaths_atl09}")
 

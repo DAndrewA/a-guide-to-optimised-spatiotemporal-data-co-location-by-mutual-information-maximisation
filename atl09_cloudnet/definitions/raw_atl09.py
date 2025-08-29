@@ -11,7 +11,10 @@ from sat_val_framework.implement import (
     RawDataEvent, 
     RawData,
     RawMetadata,
+    HomogenisedData
 )
+
+from . import vcf
 
 from typing import ClassVar
 from dataclasses import dataclass
@@ -272,8 +275,25 @@ class RawATL09(RawData):
         )
         return self
 
+
+    def _homogenise_to_VCF(self, H: Type[vcf.VCF]) -> vcf.VCF:
+        vertical_cloud_fraction = (
+            (self.data.feature_mask == 1)
+                .mean(dim=["time_index","profile"])
+                .interp_like(H.CG.height)
+                .rename("VCF")
+        )
+        return H(
+            data = vertical_cloud_fraction,
+            metadata = self.metadata
+        )
+
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
-        raise NotImplementedError(f"Type {type(self)} does not implement .homngenise_to(self, H: Type[HomogenisedData])")
+        assert issubclass(H, HomogenisedData), f"{H} must be a subclass of {HomogenisedData}"
+        if issubclass(H, vcf.VCF):
+            return self._homogenise_to_VCF(H)
+        raise TypeError(f"{type(self)} does not implement homogenise_to({H})")
+
 
 
 

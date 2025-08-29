@@ -1,0 +1,12 @@
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=get_collocation_events_ny-alesund -o /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_ny-alesund_%a.o -e /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_ny-alesund_%a.e --array=0-20 job_get_collocation_events.sh ny-alesund
+
+#hyytiala
+sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=get_collocation_events_hyytiala -o /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_hyytiala_%a.o -e /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_hyytiala_%a.e --array=0-20 job_get_collocation_events.sh hyytiala
+
+#juelich
+sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=get_collocation_events_juelich -o /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_juelich_%a.o -e /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_juelich_%a.e --array=0-20 job_get_collocation_events.sh juelich
+
+#munich
+sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=get_collocation_events_munich -o /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_munich_%a.o -e /work/scratch-nopw2/eeasm/get_collocation_events_oe/get_collocation_events_munich_%a.e --array=0-20 job_get_collocation_events.sh munich
+
