@@ -4,7 +4,7 @@ run_from_dir=../../..
 script_name="atl09_cloudnet.scripts.compute_MI_histogram"
 
 dir_vcfs=$SCRATCH/vcfs_per_event
-out_dir=$SCRATCH/MI_histogram
+out_dir=$SCRATCH/MI
 site=$1
 
 mkdir $out_dir
