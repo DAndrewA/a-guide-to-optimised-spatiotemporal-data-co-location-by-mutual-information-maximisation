@@ -11,9 +11,13 @@ from sat_val_framework.implement import (
     RawMetadata,
     RawDataSubsetter,
     RawDataEvent,
+    HomogenisedData,
 )
 
-from . import cloudnet_decode
+from . import (
+    cloudnet_decode, 
+    vcf
+)
 
 from typing import ClassVar
 from dataclasses import dataclass
@@ -49,6 +53,18 @@ def _load_cloudnet_from_file(fpath: str) -> xr.Dataset:
     return ds
 
 
+def _safe_load_cloudnet_from_file(fpath: str) -> xr.Dataset | None:
+    known_failure_types = (FileNotFoundError,)
+    try:
+        data = _load_cloudnet_from_file(fpath)
+    except known_failure_types as ex:
+        print("Known failure type:", type(ex), ex)
+        data = None
+    except Exception as e:
+        raise e
+    return data
+
+
 #def _
 
 
@@ -69,9 +85,17 @@ class RawCloudnet(RawData):
             assert var in self.data.variables, f"{var} not in Cloudnet dataset"
 
     @classmethod
-    def from_qualified_file(cls, fpath: str) -> Self:
-        data = _load_cloudnet_from_file(fpath=fpath)
-        return cls(data = data, metadata = fpath)
+    def from_qualified_file(cls, fpath: str) -> Self | None:
+        data = _safe_load_cloudnet_from_file(fpath=fpath)
+        if data is None:
+            return None
+        return cls(
+            data = data, 
+            metadata = RawMetadata(
+                loader = fpath,
+                subsetter = []
+            )
+        )
 
 
     @classmethod
@@ -95,7 +119,9 @@ class RawCloudnet(RawData):
                 site=site
             )
         )
-        data = _load_cloudnet_from_file(fpath = fpath)
+        data = _safe_load_cloudnet_from_file(fpath = fpath)
+        if data is None:
+            return None
         raw_data = cls(
             data = data,
             metadata = metadata
@@ -106,12 +132,32 @@ class RawCloudnet(RawData):
             return parameters.subset(raw_data)
 
     def perform_qc(self) -> Self:
-        #TODO: implement
+        #TODO: actually implement the qc procedure
+        self.data["qc_cloudmask"] = (
+            self.data.cloudmask
+        )
         return self
 
+
+    def _homogenise_to_VCF(self, H: Type[vcf.VCF]) -> vcf.VCF:
+        vertical_cloud_fraction = (
+            (self.data.qc_cloudmask)
+                .mean(dim="time")
+                .interp_like(H.CG.lin_interp_z)
+                .fillna(0) # the interpolation can introduce NaNs at height < cloudnet.altitude, which mess up VCF assert_on_creation
+                .rename("VCF")
+        )
+        return H(
+            data = vertical_cloud_fraction,
+            metadata = self.metadata
+        )
+
+
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
-        raise NotImplementedError(f"Type {type(self)} does not implement .homngenise_to(self, H: Type[HomogenisedData])")
-        
+        assert issubclass(H, HomogenisedData), f"{H} must be a subclass of {HomogenisedData}"
+        if issubclass(H, vcf.VCF):
+            return self._homogenise_to_VCF(H)
+        raise TypeError(f"{type(self)} does not implement homogenise_to({H})")
 
     @staticmethod
     def _fname_from_datetime(datetime: dt.datetime, site: str) -> str:
@@ -173,8 +219,9 @@ class Duration(RawDataSubsetter):
         ]
         new_data = xr.concat(
             [
-                _load_cloudnet_from_file(fpath)
+                data
                 for fpath in fpaths
+                if (data := _safe_load_cloudnet_from_file(fpath)) is not None
             ],
             dim="time"
         ).sel(time=tslice)

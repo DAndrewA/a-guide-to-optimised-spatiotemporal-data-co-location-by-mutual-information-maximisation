@@ -218,7 +218,7 @@ class RawATL09(RawData):
     @classmethod
     def from_qualified_file(cls, fpath: str) -> Self | None:
         data = safe_load_atl09_from_fpath(fpath)
-        if fpath is None:
+        if data is None:
             return None
         return cls(
             data=data, 
