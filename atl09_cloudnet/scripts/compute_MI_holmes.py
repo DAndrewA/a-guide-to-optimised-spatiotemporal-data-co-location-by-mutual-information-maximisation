@@ -145,8 +145,8 @@ def main(args: Args):
         ).rename("mutual_information").to_dataset()
 
 
-        MI_ds["n_collocation_events"] = (("R","tau_s",), [[ds.collocation_event.size]])
-        MI_ds["n_profiles"] = (("R","tau_s",), [[ (ds.n_profiles_atl09*ds.n_profiles_cloudnet).sum() ]])
+        MI_ds["n_collocation_events"] = (("R_km","tau_s",), [[ds.collocation_event.size]])
+        MI_ds["n_profiles"] = (("R_km","tau_s",), [[ (ds.n_profiles_atl09*ds.n_profiles_cloudnet).sum() ]])
         print(f"dataset-generation-success")
         MI_das.append(MI_ds)
 

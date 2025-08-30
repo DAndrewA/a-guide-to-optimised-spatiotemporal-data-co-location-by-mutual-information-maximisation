@@ -146,7 +146,7 @@ def main(args: Args):
     index_function = indices.INDEX_FUNCTIONS[args.index_function_name]
     fpath_out = os.path.join(
         args.dir_out,
-        f"MI-cube-by-hostogram_{args.site}.nc"
+        f"MI-cube-by-histogram_{args.site}.nc"
     )
 
     MI_das = list()
@@ -174,8 +174,8 @@ def main(args: Args):
                     }
                 )
         ).to_dataset()
-        MI_ds["n_collocation_events"] = (("R","tau_s",), [[ds.collocation_event.size]])
-        MI_ds["n_profiles"] = (("R","tau_s",), [[ (ds.n_profiles_atl09*ds.n_profiles_cloudnet).sum() ]])
+        MI_ds["n_collocation_events"] = (("R_km","tau_s",), [[ds.collocation_event.size]])
+        MI_ds["n_profiles"] = (("R_km","tau_s",), [[ (ds.n_profiles_atl09*ds.n_profiles_cloudnet).sum() ]])
         print(f"dataset-generation-success")
         MI_das.append(MI_ds)
 
