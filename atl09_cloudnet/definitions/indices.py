@@ -38,7 +38,7 @@ def original(index: int) -> Parametrisation:
     tau_s = int(np_arange(300,4501,300)[index // 30])
     return Parametrisation(
         distance_km = float(R_km),
-        tau = dt.timedelta(seconds=tau_s)
+        tau = dt.timedelta(seconds=int(tau_s))
     )
 
 
@@ -69,7 +69,7 @@ def extended_tau_meshgrid(index: int) -> Parametrisation:
     ])[:, index]
     return Parametrisation(
         distance_km = float(R_km),
-        tau = dt.timedelta(seconds=tau_s)
+        tau = dt.timedelta(seconds=int(tau_s))
     )
 
 
@@ -102,6 +102,6 @@ def R_150km_tau_172800s(index: int) -> Parametrisation:
     ])[:, index]
     return Parametrisation(
         distance_km = float(R_km),
-        tau = dt.timedelta(seconds=tau_s)
+        tau = dt.timedelta(seconds=int(tau_s))
     )
 
