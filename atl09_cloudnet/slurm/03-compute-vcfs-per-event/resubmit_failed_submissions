@@ -1,0 +1,2 @@
+#munich
+sbatch --partition=standard --qos=standard --account=icecaps --time=18:00:00 --mem=30G --job-name=compute_vcfs_per_event_munich -o /work/scratch-nopw2/eeasm/vcfs_per_event_oe/compute_vcfs_per_event_munich_%a.o -e /work/scratch-nopw2/eeasm/vcfs_per_event_oe/compute_vcfs_per_event_munich_%a.e --array=55,56,57,104,105,106,423,424,425 job_compute_vcfs_per_event.sh munich
