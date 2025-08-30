@@ -86,6 +86,18 @@ def parse_args() -> Args:
 
 
 
+def iterate_index_func(index_func):
+    """Generator that stops when InvalidIndexError is raised"""
+    i = 0
+    while True:
+        try:
+            yield index_func(i)
+            i += 1
+        except indices.InvalidIndexError:
+            return  # Stops the generator
+
+
+
 def main(args: Args):
     """For a given site, load all of the vcfs_per_event datasets, and calculate their MI using the Holmes estimator.
     Then, combine all datasets (including N_events and N_profiles) into a dataset with dimensions (R_km, tau_s).
