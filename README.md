@@ -10,3 +10,14 @@ In order to run the analysis, we implement:
 + `VCFProfile (HomogenisedData)` to create homogenised Vertical Cloud Fraction profiles from raw data.
 + `CollocationCloudnetATL09 (CollocationEvent)` to handle all of the information required to load raw data for a collocation event.
 + `SchemeCloudnetATL09RadiusDuration (CollocationScheme)` to handle generating `CollocationEvent`s using definitions for `RawData`.
+
+
+## Running scripts
+
+In order to run the scripts, from this directory, one can run
+
+```bash
+python -m atl09_cloudnet.scripts.<script-name> <options>
+```
+
+This ensures that all imports of the `definitions` from the scripts are valid.
