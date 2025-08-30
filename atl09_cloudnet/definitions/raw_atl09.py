@@ -259,6 +259,13 @@ class RawATL09(RawData):
             return raw_data_ob
         return parameters.subset(raw_data_ob)
 
+    @property
+    def n_profiles(self) -> int:
+        invalid_profiles_mask = self.data.feature_mask.isnull().all(dim="height")
+        return int(
+            invalid_profiles_mask.size - invalid_profiles_mask.sum()
+        )
+
 
     def perform_qc(self) -> Self:
         # in this instance, qc is performed on the featuremask by ensuring that 
@@ -305,7 +312,7 @@ class DistanceFromLocation(RawDataSubsetter):
     longitude: float
 
     # TODO: decide on a qc threshold
-    MINIMUM_REQUIRED_PROFILES: int = 50
+    MINIMUM_REQUIRED_PROFILES: int = 17 # floor (5 km of required data) / (0.28 km per profile)
 
     def _haversine_distance(self, lat_sat, lon_sat, a=6378):
         """Function to calculate the haversine distance between pairs of latitude and longitude coordinates and a fixed latitude and longitude location (lat0, lon0)

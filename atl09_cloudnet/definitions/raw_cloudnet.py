@@ -152,6 +152,10 @@ class RawCloudnet(RawData):
             metadata = self.metadata
         )
 
+    @property
+    def n_profiles(self) -> int:
+        return int(self.data.time.size)
+
 
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
         assert issubclass(H, HomogenisedData), f"{H} must be a subclass of {HomogenisedData}"
