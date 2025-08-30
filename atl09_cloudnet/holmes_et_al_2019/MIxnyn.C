@@ -30,6 +30,12 @@
 //  - comment line including mex.h
 //  - comment function mexFunction
 //  - include extern "C" around MIxnyn function
+//  - MIxnyn:
+//      + include argument double **x to pass data in directly
+//      + remove char* fname from input arguments
+//      + remove instantiation of x, and filling with zeros
+//      + remove reading of file
+//      + inclusion of print statements to stdout for the purposes of debugging
 
 
 #include <stdio.h>
@@ -46,91 +52,110 @@
 
 extern "C" {
 
-void MIxnyn(int dimx, int dimy, int K, int N, char* fname, double *MI) 
-{
-  FILE *fin;
-  int i;
-  double **x;
-  double *scal;
-  double *min;
-  double *max;
-  double *psi;
-  int d;
-  double mir;
+    void MIxnyn(double **x, int dimx, int dimy, int K, int N, double *MI) 
+    {
+      //FILE *fin;
+      int i;
+      //double **x;
+      double *scal;
+      double *min;
+      double *max;
+      double *psi;
+      int d;
+      double mir;
 
-  
-
-
-  
-  int BOX1;
-
-  double s,me;
-  double addnoise=-1;
+      
 
 
-  
-  x=(double**)calloc(dimx+dimy,sizeof(double*));
-  for (d=0;d<dimx+dimy;d++) x[d]=(double*)calloc(N,sizeof(double));
-  scal=(double*)calloc(dimx+dimy,sizeof(double));
-  min=(double*)calloc(dimx+dimy,sizeof(double));
-  max=(double*)calloc(dimx+dimy,sizeof(double));
-  for (d=0;d<dimx+dimy;d++) {min[d]=DBL_MAX/2;max[d]=-DBL_MAX/2;}
-  //reading of the data
-    fin=fopen(fname,"r");
-    if (fin)
-    for (i=0;i<N;i++) {
-      for (d=0;d<dimx+dimy;d++) {
-	fscanf(fin,"%lf",&(x[d][i]));
+      
+      int BOX1;
+
+      double s,me;
+      double addnoise=-1;
+
+
+      
+      fprintf(stdout,"function loaded\n");
+      fflush(stdout);
+      //x=(double**)calloc(dimx+dimy,sizeof(double*));
+      //for (d=0;d<dimx+dimy;d++) x[d]=(double*)calloc(N,sizeof(double));
+      scal=(double*)calloc(dimx+dimy,sizeof(double));
+      min=(double*)calloc(dimx+dimy,sizeof(double));
+      max=(double*)calloc(dimx+dimy,sizeof(double));
+      for (d=0;d<dimx+dimy;d++) {min[d]=DBL_MAX/2;max[d]=-DBL_MAX/2;}
+      ////reading of the data
+      //  fin=fopen(fname,"r");
+      //  if (fin)
+      //  for (i=0;i<N;i++) {
+      //    for (d=0;d<dimx+dimy;d++) {
+      //  fscanf(fin,"%lf",&(x[d][i]));
+      //    }
+      //  }
+      //  else { fprintf(stderr,"File %s doesn't exist\n",fname);exit(-1);}
+      //  fclose(fin);  
+
+
+     
+     
+      fprintf(stdout,"adding noise\n");
+      fflush(stdout);
+
+      // add noise
+      if (addnoise) {
+        srand((dimx+dimy)*N*K*int(x[(dimx+dimy)/2][N/10]));
+        if (addnoise==-1) for (d=0;d<dimx+dimy;d++) for (i=0;i<N;i++) x[d][i]+=(1.0*rand()/RAND_MAX)*1e-8;
+        else for (d=0;d<dimx+dimy;d++) for (i=0;i<N;i++) x[d][i]+=(1.0*rand()/RAND_MAX)*addnoise;
       }
+
+      fprintf(stdout,"noise added succesfully\n");
+      fflush(stdout);
+
+      //normalization
+      for (d=0;d<dimx+dimy;d++) {
+        me=s=0; for (i=0;i<N;i++) me+=x[d][i];
+        me/=N;  for (i=0;i<N;i++) s+=(x[d][i]-me)*(x[d][i]-me);
+        s/=(N-1);s=sqrt(s);
+        if (s==0) {;}
+        for (i=0;i<N;i++) {
+          x[d][i] = (x[d][i]-me)/s;
+          if (x[d][i]<min[d]) min[d]=x[d][i]; 
+          if (x[d][i]>max[d]) max[d]=x[d][i];
+        }
+        for (i=0;i<N;i++) x[d][i]=x[d][i]-min[d];
+      }
+      fprintf(stdout,"data normalisation complete\n");
+      fflush(stdout);
+
+      fprintf(stdout,"defining psi\n");
+      fflush(stdout);
+
+      psi=(double*)calloc(N+1,sizeof(double)); 
+      psi[1]=-(double).57721566490153;
+      for (i=1;i<N;i++) psi[i+1]=psi[i]+1/(double)i;
+      BOX1=N-5;
+      for (d=0;d<dimx+dimy;d++) scal[d]=BOX1/(max[d]-min[d]); 
+
+      fprintf(stdout,"psi defined, calculating MI\n");
+      fflush(stdout);
+
+      mir_xnyn(x,dimx,dimy,N,K,psi,scal,&mir);
+      fprintf(stdout,"%1.8f\n",mir);
+      fflush(stdout);
+
+       
+
+      MI[0] = mir;
+
+
+      fprintf(stdout,"SUCCESS\n");
+      fflush(stdout);
+
+      //for (d=0;d<dimx+dimy;d++) free(x[d]); free(x);
+      free(scal);
+      free(min);free(max);
+      free(psi);
+
     }
-    else { fprintf(stderr,"File %s doesn't exist\n",fname);exit(-1);}
-    fclose(fin);  
-
-
- 
- 
-
-  // add noise
-  if (addnoise) {
-    srand((dimx+dimy)*N*K*int(x[(dimx+dimy)/2][N/10]));
-    if (addnoise==-1) for (d=0;d<dimx+dimy;d++) for (i=0;i<N;i++) x[d][i]+=(1.0*rand()/RAND_MAX)*1e-8;
-    else for (d=0;d<dimx+dimy;d++) for (i=0;i<N;i++) x[d][i]+=(1.0*rand()/RAND_MAX)*addnoise;
-  }
-
-  //normalization
-  for (d=0;d<dimx+dimy;d++) {
-    me=s=0; for (i=0;i<N;i++) me+=x[d][i];
-    me/=N;  for (i=0;i<N;i++) s+=(x[d][i]-me)*(x[d][i]-me);
-    s/=(N-1);s=sqrt(s);
-    if (s==0) {;}
-    for (i=0;i<N;i++) {
-      x[d][i] = (x[d][i]-me)/s;
-      if (x[d][i]<min[d]) min[d]=x[d][i]; 
-      if (x[d][i]>max[d]) max[d]=x[d][i];
-    }
-    for (i=0;i<N;i++) x[d][i]=x[d][i]-min[d];
-  }
-
-  psi=(double*)calloc(N+1,sizeof(double)); 
-  psi[1]=-(double).57721566490153;
-  for (i=1;i<N;i++) psi[i+1]=psi[i]+1/(double)i;
-  BOX1=N-5;
-  for (d=0;d<dimx+dimy;d++) scal[d]=BOX1/(max[d]-min[d]); 
-
-  mir_xnyn(x,dimx,dimy,N,K,psi,scal,&mir);
-  fprintf(stdout,"%1.8f\n",mir);
-
-   
-
-  MI[0] = mir;
-
-
-  for (d=0;d<dimx+dimy;d++) free(x[d]); free(x);
-  free(scal);
-  free(min);free(max);
-  free(psi);
-
-}
 
 }
 
