@@ -73,10 +73,6 @@ extern "C" {
       double s,me;
       double addnoise=-1;
 
-
-      
-      fprintf(stdout,"function loaded\n");
-      fflush(stdout);
       //x=(double**)calloc(dimx+dimy,sizeof(double*));
       //for (d=0;d<dimx+dimy;d++) x[d]=(double*)calloc(N,sizeof(double));
       scal=(double*)calloc(dimx+dimy,sizeof(double));
@@ -95,10 +91,6 @@ extern "C" {
       //  fclose(fin);  
 
 
-     
-     
-      fprintf(stdout,"adding noise\n");
-      fflush(stdout);
 
       // add noise
       if (addnoise) {
@@ -107,8 +99,6 @@ extern "C" {
         else for (d=0;d<dimx+dimy;d++) for (i=0;i<N;i++) x[d][i]+=(1.0*rand()/RAND_MAX)*addnoise;
       }
 
-      fprintf(stdout,"noise added succesfully\n");
-      fflush(stdout);
 
       //normalization
       for (d=0;d<dimx+dimy;d++) {
@@ -123,11 +113,7 @@ extern "C" {
         }
         for (i=0;i<N;i++) x[d][i]=x[d][i]-min[d];
       }
-      fprintf(stdout,"data normalisation complete\n");
-      fflush(stdout);
 
-      fprintf(stdout,"defining psi\n");
-      fflush(stdout);
 
       psi=(double*)calloc(N+1,sizeof(double)); 
       psi[1]=-(double).57721566490153;
@@ -135,8 +121,6 @@ extern "C" {
       BOX1=N-5;
       for (d=0;d<dimx+dimy;d++) scal[d]=BOX1/(max[d]-min[d]); 
 
-      fprintf(stdout,"psi defined, calculating MI\n");
-      fflush(stdout);
 
       mir_xnyn(x,dimx,dimy,N,K,psi,scal,&mir);
       fprintf(stdout,"%1.8f\n",mir);
@@ -146,9 +130,6 @@ extern "C" {
 
       MI[0] = mir;
 
-
-      fprintf(stdout,"SUCCESS\n");
-      fflush(stdout);
 
       //for (d=0;d<dimx+dimy;d++) free(x[d]); free(x);
       free(scal);
