@@ -1,7 +1,12 @@
 import ctypes
 import numpy as np
+import os
 
-LIB = ctypes.CDLL("./libMIxnyn.so")
+fpath_so = os.path.join(
+    os.path.dirname(__file__),
+    "libMIxnyn.so"
+)
+LIB = ctypes.CDLL(fpath_so)
 
 LIB.MIxnyn.argtypes = [
     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)),  # double **x
