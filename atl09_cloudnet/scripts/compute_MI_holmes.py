@@ -98,6 +98,15 @@ def iterate_index_func(index_func):
 
 
 
+def parameterisation_to_netcdf_fname(param: indices.Parametrisation, site: str) -> str:
+    """takes a Parametrisation output of an index function and converts it to a filename according to the outputs from compute_vcfs_per_event.py
+    """
+    R_km = param.distance_km
+    tau_s = int( param.tau.total_seconds() )
+    return f"vcfs-per-event_{site}_{R_km}km_{tau_s:06}s.nc"
+
+
+
 def main(args: Args):
     """For a given site, load all of the vcfs_per_event datasets, and calculate their MI using the Holmes estimator.
     Then, combine all datasets (including N_events and N_profiles) into a dataset with dimensions (R_km, tau_s).
@@ -127,12 +136,13 @@ def main(args: Args):
         MI = holmes.call_MI_xnyn(X=X, Y=Y, K=args.K)
 
         MI_ds = xr.DataArray(
-            data = (("R_km", "tau_s",), [[MI]]),
+            data = MI,
             coords = {
-                "R_km": (("R_km",), [R_km]),
-                "tau_s": (("tau_s",), [tau_s])
+                "R_km": [R_km],
+                "tau_s": [tau_s]
             }
-        ).to_dataset()
+            dims=("R_km", "tau_s",)
+        ).rename("mutual_information").to_dataset()
 
 
         MI_ds["n_collocation_events"] = (("R","tau_s",), [[ds.collocation_event.size]])
