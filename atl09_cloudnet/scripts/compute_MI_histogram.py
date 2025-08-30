@@ -16,6 +16,7 @@ from xhistogram.xarray import histogram as xhist
 
 
 SITES = ("ny-alesund", "hyytiala", "juelich", "munich",)
+DEFAULT_BINS = 100
 
 
 
@@ -97,13 +98,10 @@ def parameterisation_to_netcdf_fname(param: indices.Parametrisation, site: str) 
 
 
 
-
-def counts_from_raw_vcfs_per_profile(ds: xr.Dataset, BINS_VCF: int | np.ndarray) -> xr.DataArray:
+# TODO: assess impact of choice of BINS_VCF 
+def counts_from_raw_vcfs_per_profile(ds: xr.Dataset, BINS_VCF: int | np.ndarray = DEFAULT_BINS) -> xr.DataArray:
     """Function that maps a loaded vcfs_per_event dataset to a histogram of joint vcf values per height.
     """
-    # TODO: assess impact of choice of BINS_VCF 
-    BINS_VCF = 100
-
     counts = xhist(
         ds.vcf_atl09,
         ds.vcf_cloudnet,
