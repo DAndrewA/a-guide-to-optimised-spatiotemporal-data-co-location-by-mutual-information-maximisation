@@ -1,0 +1,12 @@
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=0:10:00 --mem=10G --job-name=compute_MI_histogram_ny-alesund -o /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_ny-alesund.o -e /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_ny-alesund.e job-compute-MI-histogram.sh ny-alesund
+
+#hyytiala
+sbatch --partition=standard --qos=standard --account=icecaps --time=0:10:00 --mem=10G --job-name=compute_MI_histogram_hyytiala -o /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_hyytiala.o -e /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_hyytiala.e job-compute-MI-histogram.sh hyytiala
+
+#juelich
+sbatch --partition=standard --qos=standard --account=icecaps --time=0:10:00 --mem=10G --job-name=compute_MI_histogram_juelich -o /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_juelich.o -e /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_juelich.e job-compute-MI-histogram.sh juelich
+
+#munich
+sbatch --partition=standard --qos=standard --account=icecaps --time=0:10:00 --mem=10G --job-name=compute_MI_histogram_munich -o /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_munich.o -e /work/scratch-nopw2/eeasm/MI_histogram_oe/compute_MI_histogram_munich.e job-compute-MI-histogram.sh munich
+
