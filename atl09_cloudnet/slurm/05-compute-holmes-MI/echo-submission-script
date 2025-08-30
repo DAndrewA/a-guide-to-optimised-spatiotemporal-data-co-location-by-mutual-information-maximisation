@@ -1,0 +1,10 @@
+scratch_dir=$SCRATCH/MI_holmes_oe
+
+for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
+    job_name="compute_MI_holmes_${site}";
+    slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=0:10:00 --mem=10G --job-name=${job_name} -o ${scratch_dir}/${job_name}.o -e ${scratch_dir}/${job_name}.e job-compute-MI-holmes.sh ${site}";
+    echo "#${site}";
+    echo "${slurm_command}";
+    echo "";
+done
+

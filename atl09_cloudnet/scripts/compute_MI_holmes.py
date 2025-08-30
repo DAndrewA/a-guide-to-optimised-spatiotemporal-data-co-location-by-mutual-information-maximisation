@@ -140,7 +140,7 @@ def main(args: Args):
             coords = {
                 "R_km": [R_km],
                 "tau_s": [tau_s]
-            }
+            },
             dims=("R_km", "tau_s",)
         ).rename("mutual_information").to_dataset()
 
