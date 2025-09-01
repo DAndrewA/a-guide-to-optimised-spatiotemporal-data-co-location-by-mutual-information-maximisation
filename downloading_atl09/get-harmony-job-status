@@ -1,0 +1,7 @@
+for job_id in $(cat harmony-job-ids); do
+    json_output=$(curl -Lnbj https://harmony.earthdata.nasa.gov/jobs/$job_id);
+    n_total=$(echo $json_output | jq '.numInputGranules');
+    n_complete=$(echo $json_output | jq '[.links[] | select( .href | contains(".h5") ) ] | length');
+    echo "${job_id} has ${n_complete} out of ${n_total} jobs completed";
+done
+    

@@ -1,0 +1,7 @@
+for job_id in $(cat ../harmony-job-ids); do
+    echo $job_id;
+    job_status=$(curl -Lnbj https://harmony.earthdata.nasa.gov/jobs/$job_id);
+
+    echo "job.outputDataSize = $(echo $job_status | jq '.outputDataSize')";
+done
+

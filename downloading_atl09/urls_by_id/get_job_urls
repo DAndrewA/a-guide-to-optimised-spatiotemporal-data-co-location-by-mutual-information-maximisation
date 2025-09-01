@@ -1,0 +1,18 @@
+for job_id in $(cat ../harmony-job-ids); do
+    echo $job_id;
+    job_status=$(curl -Lnbj https://harmony.earthdata.nasa.gov/jobs/$job_id);
+
+    echo "job.status = $(echo $job_status | jq '.status')"
+    job_complete=$(echo $job_status | jq '.status | contains("succesful") or contains("complete")');
+    echo "job_complete = $job_complete"
+
+    if [[ "$job_complete" == "true" ]]; then
+        echo "${job_id} is complete";
+        page_links=$(echo $job_status | jq -r '.links[] | select(.title | contains(" page ")) | .href');
+
+        echo "" > "urls-${job_id}";
+        for page_link in $page_links; do
+            curl -Lnbj $page_link | jq '.links[] | select( .type == "application/x-hdf5" ) | .href' >> "urls-${job_id}";
+        done
+    fi
+done
