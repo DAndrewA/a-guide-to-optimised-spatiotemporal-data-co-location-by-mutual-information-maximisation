@@ -1,0 +1,103 @@
+# Coding tasks
+- [ ] Check status of harmony jobs
+- [ ] Obtain urls for harmony jobs using download_atl09/harmony-urls/get_job_urls
+- [ ] Identify new icecaps gws location, update all:
+    + [ ] scripts
+    + [ ] slurm submission scripts
+    + [ ] ICECAPS environement variable
+    + [ ] notebooks
+- [ ] Identify storage capacity requirements for new ATL09 data, and check with Neely if this flies
+- [ ] Compress old ATL09 data for all sites, delete if necessary
+- [ ] Initialise downloads for harmony jobs on nxfer servers into appropriate folders on new gws
+
+- [ ] Write new index function for larger R values being sampled
+- [ ] Update memory requirements and array indices for vcfs_per_event slurm submission
+- [ ] Implement the proper Cloudnet quality checks
+- [ ] Re-run get collocation events
+- [ ] Re-run vcfs_per_event
+- [ ] Re-run both MI scripts (histogram and holmes)
+
+- [ ] Implement a basic validation routine, that can run on vcfs_per_event
+- [ ] Run validation script on all vcfs_per_event
+- [ ] Plot of representative statistic forall R, tau
+- [ ] For select p in {p00, p01, p10, p11, p_typical, p_maxMIhist, p_maxMIholmes}, plot more validation quantities and describe how results change with changing p.
+- [ ] Bish bash bosh bobs your uncle
+
+
+
+
+# Figures for paper
+- [ ] Figure 3
+Shows off the collocation and homogenisation processing.
+\caption {
+    (a) The ATL09 strong beam ground track trajectories relative to Ny-Alesund, for the ATL09 orbit with RGT <RGT> on cycle <cycle>.
+    The raw ATL09 data (b) and the caclculated collocation criteria (c).
+    The vertical red lines indicate the boundaries of the subset data that is included after collocation.
+    The cloud mask for Cloudnet (d) and corresponding collocation criteria (e), similar to (b) and (c) respectively.
+    (f) The homogenised vertical cloud fractions from the collocated ATL09 and Cloudnet data.
+}
+
+/-------v---v---v---\
+|       | b | d |   |
+|   a   |---+---| f |
+|       | c | e |   |
+\-------^---^---^---/
+
+    + [ ] Decide on a particular case study
+    + [ ] Adapt plot in `test_CollocationEventList.ipynb`, to include homogenised data on right
+    + [ ] Further adapt plot to display un-subset data, and highlight data kept after subsetting
+
+
+
+
+- [ ] Figure 4
+Results of analysis at a given site across range of R, tau values.
+\caption {
+    For a range of parametrisations (R, tau), the total number of collocation events (a) and profiles within the collocated events (b) being used in the analysis.
+    For the given parametrisations, the mutual information between the ATL09 and Cloudnet vertical cloud fraction profiles using the histogram (c) and holmes et al. (2019) (d) mutual information estimators.
+}
+
+/---v---v---v---\
+| a | b | c | d |
+\---^---^---^---/
+
+    + [ ] Adapt figure from LOCAL `_MI_data/basic_plots.ipynb`
+    + [ ] Select a site
+    + [ ] Recreate the plot for larger range of R, tau
+    + [ ] Include subplot labels in inkscape
+
+
+
+
+- [ ] Figure 5
+For each site, plots showing the mutual informations and (correlation coefficient?) and (other metric) as a function of (R, tau)
+
+             MI  metric1 ... 
+            /---v---v-
+ny-alesund  | a | b | 
+            >---+---+-
+hyytiala    |   |   | 
+            >---+---+- ...
+juelich     |   |   | 
+            >---+---+-
+munich      |   |   | 
+            \---^---^-
+
+    + [ ] Actually make the plot...
+
+
+
+
+- [ ] Figure 6
+A plot showing for the seven chosen parametrisations (corners of the grid + typical (100km, T) + max MI-hist + max MI-holmes), vertical plots of other validations (log vcf ratio, vcf-i given vcf-l)
+
+                /---v---v---v---v---v---v---\
+vcf-difference  | a | b | c | d | e | f | g |
+                >---+---+---+---+---+---+---<
+log vcf ratio   |   |   |   |   |   |   |   |
+                >---+---+---+---+---+---+---<
+vcfi | vcfj     |   |   |   |   |   |   |   |
+                >---+---+---+---+---+---+---<
+                             ... 
+
+    + [ ] make the plot
