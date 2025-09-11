@@ -51,8 +51,8 @@ def _are_atl09_orbits_subsequent(fname1: str, fname2: str) -> bool:
     # processed_ATL09_20190126121018_04440201_006_02.h5
     #                           rgt -^^^^
     #                             cycle -^^
-    __, __, __, rgt_cycle1, __, __ = fname1.split("_")
-    __, __, __, rgt_cycle2, __, __ = fname2.split("_")
+    __, __, rgt_cycle1, __, __ = fname1.split("_")
+    __, __, rgt_cycle2, __, __ = fname2.split("_")
     rgt1, cycle1 = int(rgt_cycle1[:4]), int(rgt_cycle1[4:6])
     rgt2, cycle2 = int(rgt_cycle2[:4]), int(rgt_cycle2[4:6])
 
