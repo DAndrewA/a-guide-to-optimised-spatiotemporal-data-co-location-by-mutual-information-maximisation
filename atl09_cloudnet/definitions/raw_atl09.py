@@ -381,12 +381,12 @@ class ATL09Event(RawDataEvent):
     ATTRIBUTES:
         fpath1 (str): fully qualified path to a .h5 file containing ATL09 data to be loaded.
         fpath2 (str | None) fully qualified path to a .h5 file containing ATL09 data to be loaded. Use in the event that a collocation event spans a granule boundary and is therefore split across files.
-        latitude (float): Latitude in decimal degrees of the associated Cloudnet site.
-        longitude (float): Longitude in decimal degrees of the associated Cloudnet site.
+        min_separation_km (float | None) the minimum separation between the ATL09 data and Cloudnet site during the event. (optional)
     """
     RDT: ClassVar = RawATL09
     fpath1: str
     fpath2: str | None
+    min_separation_km: float | None
 
 
 

@@ -95,6 +95,7 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
             atl09_event_args = {
                 "fpath1": fname_atl1, 
                 "fpath2": None,
+                "min_separation_km": None,
             }
             if fname_atl2 is not None:
                 if _are_atl09_orbits_subsequent(fname_atl1, fname_atl2):
@@ -111,7 +112,7 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
                 parameters = None
             )
             if raw_atl09 is None:
-                print(f"No data loaded, REJECTING")
+                print(f"No ATL09 data loaded, REJECTING")
                 continue
             
             # obtain a crude estimate of t_0 from the median time in the ATL09 data
@@ -149,8 +150,11 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
                 print(f"{atl09_event=} has fewer than {self.min_required_atl09_profiles} profiles within {self.R_max_km} km of {cloudnet_site}. REJECTING")
                 continue
 
-            
-            
+            d2s_min = float(d2s.min())
+            atl09_event_args.update(
+                min_separation_km = d2s_min
+            )
+             
             cloudnet_event_args.update(
                 closest_approach_time = t0
             )
