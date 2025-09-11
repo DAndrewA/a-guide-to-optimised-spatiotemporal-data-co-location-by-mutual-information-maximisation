@@ -2,7 +2,7 @@ scratch_dir=$SCRATCH/get_collocation_events_oe
 
 for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
     job_name="get_collocation_events_${site}";
-    slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=${job_name} -o ${scratch_dir}/${job_name}_%a.o -e ${scratch_dir}/${job_name}_%a.e --array=0-20 job_get_collocation_events.sh ${site}";
+    slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=5G --job-name=${job_name} -o ${scratch_dir}/${job_name}_%a.o -e ${scratch_dir}/${job_name}_%a.e --array=0-100 job_get_collocation_events.sh ${site}";
     echo "#${site}";
     echo "${slurm_command}";
     echo "";
