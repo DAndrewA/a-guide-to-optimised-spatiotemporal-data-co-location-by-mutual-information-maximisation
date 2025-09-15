@@ -105,3 +105,36 @@ def R_150km_tau_172800s(index: int) -> Parametrisation:
         tau = dt.timedelta(seconds=int(tau_s))
     )
 
+
+@register_index_function
+def R_500km_tau_172800s(index: int) -> Parametrisation:
+    """Extends the range of R values checked to 500km and tau to two days"""
+    R = np.concatenate([
+        [5],
+        np.arange(10, 100, 10),
+        np.logspace(2, np.log10(500), 20)
+    ])
+
+    tau = np.concatenate([
+        np.arange(300,1800, 300),        # 5,10,...,30 minutes 
+        np.arange(1800, 5400, 900),      # 30,45,...,90 minutes
+        np.arange(5400, 10800, 1800),    # 90,120,150,180 minutes
+        np.arange(10800, 21600, 3600),   # 3,4,5,6, hours
+        np.arange(21600, 43200, 7200),   # 6,8,10,12 hours
+        np.arange(43200, 64800, 10800),  # 12,15,18 hours
+        np.arange(64800, 172800, 21600), # 18,24,30,...,48 hours
+        [172800]
+    ])
+
+    if index < 0 or index >= R.size * tau.size:
+        raise InvalidIndexError(index)
+
+    R_, tau_ = np.meshgrid(R, tau)
+    [R_km, tau_s] = np.array([
+        R_.flatten(),
+        tau_.flatten()
+    ])[:, index]
+    return Parametrisation(
+        distance_km = float(R_km),
+        tau = dt.timedelta(seconds=int(tau_s))
+    )
