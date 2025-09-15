@@ -11,11 +11,6 @@ from dataclasses import dataclass
 import os
 
 
-SCHEME = SchemeCloudnetATL09RadiusDuration(
-    R_max_km=150
-)
-
-
 
 @dataclass(kw_only=True, frozen=True)
 class Args:
@@ -117,7 +112,8 @@ def main(args: Args):
     SLICE_SIZE = args.slice_length
     atl09_indices = slice(
         SLICE_SIZE * args.job_array_index,
-        SLICE_SIZE * (args.job_array_index + 1)
+        SLICE_SIZE * (args.job_array_index + 1),
+        None
     )
     fpaths_atl09 = [
         os.path.join(args.dir_atl09, fname)
@@ -130,13 +126,25 @@ def main(args: Args):
         print("TERMINATING")
         return
 
+    print(f"{SLICE_SIZE=}  {args.job_array_index=}")
+    print(f"{atl09_indices=}")
+    print(f"{len(fpaths_atl09)=}")
+
     print(f"Finding collocation events for {fpaths_atl09}")
 
+    SCHEME = SchemeCloudnetATL09RadiusDuration(
+        R_max_km=args.R_min_km
+    )
+    print(f"{SCHEME=}")
     collocation_event_list = SCHEME.get_matches_from_fpath_lists(
         file_list_atl09 = fpaths_atl09,
         dir_cloudnet = args.dir_cloudnet,
         cloudnet_site = args.site
     )
+
+    if collocation_event_list is None:
+        print("No collocation events found, TERMINATING")
+        return None
 
     print(f"{len(collocation_event_list)} collocation events found:")
     for event in collocation_event_list:
