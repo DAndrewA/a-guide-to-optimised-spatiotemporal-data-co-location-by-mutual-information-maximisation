@@ -1,2 +1,0 @@
-#hyytiala
-sbatch --partition=standard --qos=standard --account=icecaps --time=18:00:00 --mem=30G --job-name=compute_vcfs_per_event_hyytiala -o /work/scratch-nopw2/eeasm/vcfs_per_event_oe/compute_vcfs_per_event_hyytiala_%a.o -e /work/scratch-nopw2/eeasm/vcfs_per_event_oe/compute_vcfs_per_event_hyytiala_%a.e --array=0,442 job_compute_vcfs_per_event.sh hyytiala
