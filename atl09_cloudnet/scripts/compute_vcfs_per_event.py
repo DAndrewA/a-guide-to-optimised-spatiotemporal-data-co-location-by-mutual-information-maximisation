@@ -35,6 +35,8 @@ SITES = {
 class Args:
     fpath_pickle: str
     site: str
+    batched: bool
+    batch: slice
     dir_output: str
     joint_params: RadiusDuration
 
@@ -81,13 +83,36 @@ def parse_args() -> None | Args:
     )
 
 
+    parser.add_argument(
+        "--batch",
+        action = "store_true",
+        help="If supplied, collocation events are handled in batches",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        help="Size of collocation event batches. MUST be supplied if --batch given"
+    )
+
+
     parsed_args = parser.parse_args()
     
     site = parsed_args.site
 
     # get R, tau from array index
     index_function = indices.INDEX_FUNCTIONS[parsed_args.index_function]
-    R_tau = index_function(parsed_args.job_array_index)
+
+    # default arguments if not batching
+    index = parsed_args.job_array_index
+    batch = slice(None, None, None)
+
+    if (batched:=parsed_args.batch):
+        if not (batch_size := parsed_args.batch_size):
+            raise argparse.ArgumentError("When --batch is specified, --batch-size must be specified")
+        batchn, index = divmod(parsed_args.job_array_index, index_function.MAX_INDEX)
+        batch = slice(batch_size * batchn, batch_size * (batchn + 1), None)
+
+    R_tau = index_function(index)
     joint_params = RadiusDuration({
         RawATL09: DistanceFromLocation(
             distance_km = R_tau.distance_km,
@@ -108,6 +133,8 @@ def parse_args() -> None | Args:
     return Args(
         fpath_pickle = fpath_pickle,
         site = site,
+        batched=batched,
+        batch = batch, 
         dir_output = parsed_args.output_dir,
         joint_params = joint_params
     )
@@ -151,16 +178,19 @@ filter_none = lambda generator: (v for v in generator if v is not None)
 
 
 def main(args: Args):
-    all_collocation_events = CollocationEventList.from_file(args.fpath_pickle)
-    print(f"Loaded {args.fpath_pickle}, with {len(all_collocation_events)} events in total")
-
+    batch_collocation_events = CollocationEventList.from_file(args.fpath_pickle)[args.batch]
+    print(f"Loaded {args.fpath_pickle}, with {len(batch_collocation_events)} events in batch")
 
     R_km = args.joint_params[RawATL09].distance_km
     tau_s = int( args.joint_params[RawCloudnet].duration.total_seconds() )
+    fname_out = f"vcfs-per-event_{args.site}_{R_km:3.3f}km_{tau_s:06}s"
+    if args.batched: fname_out += f"_batch_{args.batch.start}_{args.batch.stop}"
+    fname_out += ".nc"
     fpath_out = os.path.join(
         args.dir_output,
-        f"vcfs-per-event_{args.site}_{R_km}km_{tau_s:06}s.nc"
+        fname_out
     )
+    print(f"{fpath_out=}")
 
 
     # forgive me for the attrocities that are about to be committed to code
@@ -169,7 +199,7 @@ def main(args: Args):
             event, 
             print("\n",f"LOADING",event)
         )[0]
-        for event in all_collocation_events
+        for event in batch_collocation_events
     )
 
     # reject events when the minimum ICESat-2 separation is gretaer than R_km:
@@ -279,7 +309,7 @@ def main(args: Args):
     print("Additional information")
     for label, value in zip(
         ("loading", "none after laoding", "homogenissaton", "success", "total"),
-        (N_fail_on_load, N_fail_with_raw_data_None, N_fail_homogenisation, N_success, len(all_collocation_events))
+        (N_fail_on_load, N_fail_with_raw_data_None, N_fail_homogenisation, N_success, len(batch_collocation_events))
     ):
         print(f"{label:>25} | {value}")
 
