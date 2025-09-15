@@ -239,19 +239,10 @@ class RawATL09(RawData):
         )
 
         # load the data safely from the 
-        individual_data = [
-            data
-            for fpath in (event.fpath1, event.fpath2)
-            if fpath is not None
-            if (data := safe_load_atl09_from_fpath(fpath)) is not None
-        ]
-        if not individual_data:
+        data = safe_load_atl09_from_fpath(event.fpath)
+        if data is None:
             print(f"No data available for event={event}")
             return None
-        data = xr.combine_nested(
-            individual_data,
-            concat_dim = "time_index"
-        )
         
         # apply subsetting based on parameters
         raw_data_ob = cls(data=data, metadata=metadata)
