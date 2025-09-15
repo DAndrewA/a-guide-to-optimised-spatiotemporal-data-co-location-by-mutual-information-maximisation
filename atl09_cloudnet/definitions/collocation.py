@@ -80,11 +80,16 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
                 **atl09_event_args 
             )
 
-            # use the given event to load the ATL09 data
-            raw_atl09 = RawATL09.from_collocation_event_and_parameters(
-                event = atl09_event, 
-                parameters = None
-            )
+            try:
+                # use the given event to load the ATL09 data
+                raw_atl09 = RawATL09.from_collocation_event_and_parameters(
+                    event = atl09_event, 
+                    parameters = None
+                )
+            except OSError as OSE:
+                print(type(OSE), OSE)
+                print(f"OSError encountered, REJECTING")
+                continue
             if raw_atl09 is None:
                 print(f"No ATL09 data loaded, REJECTING")
                 continue
