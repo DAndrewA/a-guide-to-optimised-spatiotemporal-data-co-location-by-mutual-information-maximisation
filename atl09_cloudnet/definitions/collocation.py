@@ -46,23 +46,6 @@ class CollocationCloudnetATL09(CollocationEvent):
 
 
 
-def _are_atl09_orbits_subsequent(fname1: str, fname2: str) -> bool:
-    """Returns True if the filenames associated with ATL09 data are from subsequent orbits"""
-    # processed_ATL09_20190126121018_04440201_006_02.h5
-    #                           rgt -^^^^
-    #                             cycle -^^
-    __, __, rgt_cycle1, __, __ = fname1.split("_")
-    __, __, rgt_cycle2, __, __ = fname2.split("_")
-    rgt1, cycle1 = int(rgt_cycle1[:4]), int(rgt_cycle1[4:6])
-    rgt2, cycle2 = int(rgt_cycle2[:4]), int(rgt_cycle2[4:6])
-
-
-    condition1 = (cycle1 == cycle2) and (rgt1 + 1 == rgt2)
-    condition2 = (cycle1 + 1 == cycle2) and (rgt1 == 1387) and (rgt2 == 1)
-    return condition1 or condition2
-
-
-
 @dataclass(kw_only=True, frozen=True)
 class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
     """Collocation scheme to find collocation events between Cloudnet and ATL09 data, based on a radius-duration scheme.
@@ -74,7 +57,7 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
     R_max_km: float
     min_required_atl09_profiles: int = 17 # floor (5 km of required data) / (0.28 km per profile)
 
-    def get_matches_from_fpath_lists(self, file_list_atl09: list[str], dir_cloudnet: str, cloudnet_site: str) -> CollocationEventList:
+    def get_matches_from_fpath_lists(self, file_list_atl09: list[str], dir_cloudnet: str, cloudnet_site: str) -> CollocationEventList | None:
         """From lists of file paths for ATL09 and Cloudnet data, identify collocation events and store the information using CollocationCloudnetATL09 instance
         
         The premise for determining if an ATL09 collocation event is spread across multiple files is that, typically, for a randomly placed event, the granule will not be split and therefore all data will be obtained from a single file.
@@ -82,25 +65,16 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
         In the event that there are two collocation events on subsequent orbits, both consisting of data across two files, the harmony-subset data describes a time when the file is valid for.
         The two files belonging to the same event will have the smallest absolute timedelta between them, allowing us to identify events in long strings of subsequent orbit-number files.
         """
-        skip_this_one = False
         event_list = list()
 
-        for (fname_atl1, fname_atl2) in zip(file_list_atl09, file_list_atl09[1:] + [None]):
-            if skip_this_one or fname_atl1 is None:
-                # skip this one will be set if subsequent files are used for a collocation event
-                skip_this_one = False
-                continue
+        for i, fname_atl1 in enumerate(file_list_atl09):
+            print(f"{i=:>5} ", end="")
             print(f"Finding collocation for {fname_atl1}")
             
             atl09_event_args = {
-                "fpath1": fname_atl1, 
-                "fpath2": None,
+                "fpath": fname_atl1, 
                 "min_separation_km": None,
             }
-            if fname_atl2 is not None:
-                if _are_atl09_orbits_subsequent(fname_atl1, fname_atl2):
-                    skip_this_one = True
-                    atl09_event_args["fpath2"] = fname_atl2
 
             atl09_event = ATL09Event(
                 **atl09_event_args 
@@ -168,6 +142,10 @@ class SchemeCloudnetATL09RadiusDuration(CollocationScheme):
             event_list.append(collocation_event)
 
         # after all ATL09 filenames are checked:
+        if not event_list:
+            print(f"NO EVENTS FOUND")
+            return None
+
         return CollocationEventList(
             data = event_list
         )
