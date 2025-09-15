@@ -172,6 +172,21 @@ def main(args: Args):
         for event in all_collocation_events
     )
 
+    # reject events when the minimum ICESat-2 separation is gretaer than R_km:
+    N_reject_minimum_R = 0
+    events_to_load = filter_none((
+        event
+
+        if event[RawATL09].min_separation_km <= R_km
+        else (
+            None,
+            print(f"ABORTING due to min_separation_km={event[RawATL09].min_separation_km} > {R_km}"),
+            N_reject_minimum_R := N_reject_minimum_R + 1
+        )[0]
+
+        for event in events_to_load
+    ))
+
     # load an event to a CollocatedRawData instance, and catch exceptions in loading
     N_fail_on_load = 0
     collocated_raw_data = filter_none((
