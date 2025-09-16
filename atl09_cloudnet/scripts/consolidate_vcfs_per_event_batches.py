@@ -151,7 +151,7 @@ def main(args: Args):
         tau_s = int( params.tau.total_seconds() )
         fpath_out = os.path.join(
             args.dir_vcfs,
-            f"vcfs-per-event_{site}_{R_km:3.3f}km_{tau_s:06}s.nc",
+            f"vcfs-per-event_{args.site}_{R_km:3.3f}km_{tau_s:06}s.nc",
         )
 
         print(f"SAVING to {fpath_out}")
