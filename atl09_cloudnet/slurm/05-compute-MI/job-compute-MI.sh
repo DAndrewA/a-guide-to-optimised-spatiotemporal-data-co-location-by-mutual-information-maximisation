@@ -1,7 +1,7 @@
 #!/bin/bash
 
 run_from_dir=../../..
-script_name="atl09_cloudnet.scripts.compute_MI_holmes"
+script_name="atl09_cloudnet.scripts.compute_MI"
 
 dir_vcfs=$SCRATCH/vcfs_per_event
 out_dir=$SCRATCH/MI
@@ -21,5 +21,6 @@ echo "dir_out = ${dir_out}"
         --dir-out $out_dir \
         --site $site \
         --index-function "R_150km_tau_172800s" \
-        -K 20
+        -K 20 \
+        --N-bins 50
 )
