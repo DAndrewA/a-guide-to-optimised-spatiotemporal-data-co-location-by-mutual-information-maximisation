@@ -147,8 +147,8 @@ def main(args: Args):
         )
         print("success")
 
-        R_km = param.distance_km
-        tau_s = int( param.tau.total_seconds() )
+        R_km = params.distance_km
+        tau_s = int( params.tau.total_seconds() )
         fpath_out = os.path.join(
             args.dir_vcfs,
             f"vcfs-per-event_{site}_{R_km:3.3f}km_{tau_s:06}s.nc",
