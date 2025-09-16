@@ -34,7 +34,66 @@ class Args:
 
 
 def parse_args() -> Args:
-    raise NotImplementedError()
+    import argparse
+    parser = argparse.ArgumentParser(description="Collocate ATL09 and CloudNet data")
+
+    # Required arguments (no default values in dataclass)
+    parser.add_argument(
+        "--dir-vcfs",
+        type=str,
+        required=True,
+        help="Directory path for the vcfs-per-event netcdf files"
+    )
+
+    parser.add_argument(
+        "--site",
+        type=str,
+        choices = SITES,
+        required=True,
+        help="Site identifier"
+    )
+
+    parser.add_argument(
+        "--dir-out",
+        type=str,
+        required=True,
+        help="Directory path to location for saving output Mutual-Information-cube netcdf files"
+    )
+
+    parser.add_argument(
+        "--index-function",
+        choices = indices.INDEX_FUNCTIONS.keys(),
+        required=True,
+        help="Name of the function mapping job array indices to (R,tau) pairs"
+    )
+
+    parser.add_argument(
+        "--N-bins",
+        type=int,
+        required=True,
+        help="The number of bins when computing histograms."
+    )
+
+    parser.add_argument(
+        "-K",
+        type=int,
+        required=True,
+        help="The order of the Holmes estimator (finds the kth nearest neighbour)"
+    )
+
+    parsed_args = parser.parse_args()
+    
+    assert os.path.isdir( dir_vcfs := parsed_args.dir_vcfs)
+    assert os.path.isdir( dir_out := parsed_args.dir_out )
+
+    return Args(
+        dir_vcfs = dir_vcfs,
+        site = parsed_args.site,
+        dir_out = dir_out,
+        index_function_name = parsed_args.index_function,
+        n_bins = parsed_args.N_bins,
+        K = parsed_args.K
+    )
 
 
 
