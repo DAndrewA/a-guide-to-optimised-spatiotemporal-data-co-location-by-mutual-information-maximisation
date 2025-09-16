@@ -134,7 +134,6 @@ def main(args: Args):
             fnames = fnames_site
         )
         print(f"{len(batch_fnames)} found")
-        continue
 
         print(f"Concatting dataset: ", end="")
         concatted_dataset = concat_batch_from_fpaths(
