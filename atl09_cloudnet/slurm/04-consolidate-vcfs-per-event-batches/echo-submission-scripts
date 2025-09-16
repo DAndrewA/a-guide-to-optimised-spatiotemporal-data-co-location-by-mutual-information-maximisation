@@ -1,0 +1,10 @@
+scratch_dir=$SCRATCH/consolidate_vcfs_per_event_batches
+
+for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
+    job_name="consolidate_vcfs_per_event_batches_${site}"
+    slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=0:30:00 --mem=1G --job-name=${job_name} -o ${scratch_dir}/${job_name}.o -e ${scratch_dir}/${job_name}.e job-consolidate_vcfs_per_event_batches.sh ${site}";
+    echo "#${site}";
+    echo "${slurm_command}";
+    echo "";
+done
+    
