@@ -1,0 +1,11 @@
+for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
+    echo $site;
+    site_glob="get_collocation_events_$site"
+    echo "success: " $(grep -c "EVENT FOUND" $SCRATCH/get_collocation_events_oe/$site_glob*.o | awk -F ":" '{print $NF}' | paste -sd "+" | bc);
+    echo "OSError: " $(grep "OSError" $SCRATCH/get_collocation_events_oe/$site_glob*.o | wc -l);
+    echo "No cloudnet: " $(grep -c "_categorize.nc not found for ATL09 event, REJECTING" $SCRATCH/get_collocation_events_oe/$site_glob*.o | awk -F ":" '{print $NF}' | paste -sd "+" | bc);
+    echo "!510km: " $(grep -c "has fewer than 17 profiles within" $SCRATCH/get_collocation_events_oe/$site_glob*.o | awk -F ":" '{print $NF}' | paste -sd "+" | bc);
+    echo "!ATL09 loaded: " $(grep -c "No ATL09 data loaded, REJECTING" $SCRATCH/get_collocation_events_oe/$site_glob*.o | awk -F ":" '{print $NF}' | paste -sd "+" | bc);
+    echo "Total rejected: " $(grep -c "REJECTING" $SCRATCH/get_collocation_events_oe/$site_glob*.o | awk -F ":" '{print $NF}' | paste -sd "+" | bc)
+    echo "";
+done
