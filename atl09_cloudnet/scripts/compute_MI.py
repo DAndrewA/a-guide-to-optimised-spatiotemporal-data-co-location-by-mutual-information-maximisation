@@ -206,28 +206,39 @@ def main(args: Args):
         X = ds.vcf_atl09.transpose("height","collocation_event").data
         Y = ds.vcf_cloudnet.transpose("height","collocation_event").data
 
+        data_vars = dict()
         # 1) Holmes - total
         print("MI holmes total: ", end="")
-        MI_holmes_total = holmes.call_MI_xnyn(X=X, Y=Y, K=args.K)
+        data_vars["MI_holmes_total"] = float(holmes.call_MI_xnyn(X=X, Y=Y, K=args.K))
         print("success")
 
         # 2) Holmes - per height
         print("MI holmes per height: ", end="")
-        MI_holmes_per_height = np.array([
-            holmes.call_MI_xnyn(X=Xrow, Y=Yrow, K=args.K)
-            for Xrow, Yrow in zip(X,Y)
-        ])
-        print("success")
+        if X.shape[1] < args.K:
+            print("skipping, insuffcient data for K={args.K}")
+        else:
+            data_vars["MI_holmes_per_height"] = ( # defined so that xr.Dataset can assign a height coordinate
+                ["height"],
+                np.array([
+                    holmes.call_MI_xnyn(
+                        X=np.atleast_2d(Xrow).reshape((1,-1)), 
+                        Y=np.atleast_2d(Yrow).reshape((1,-1)), 
+                        K=args.K
+                    )
+                    for Xrow, Yrow in zip(X,Y)
+                ]),
+            )
+            print("success")
 
         # bins required for histograms
         lift_degeneracy = lambda a: np.unique(a)
-        BINS_equal_width = np.linspace(0,1, args.nbins+1)
+        BINS_equal_width = np.linspace(0,1, args.n_bins+1)
         BINS_equal_counts_atl09 = lift_degeneracy(np.quantile(X, BINS_equal_width))
         BINS_equal_counts_cloudnet = lift_degeneracy(np.quantile(Y, BINS_equal_width))
 
         # 3) Histogram - equal width
         print("MI hist equal width: ", end="")
-        MI_hist_equal_width = (
+        data_vars["MI_hist_equal_width"] = (
             mutual_information_with_height_from_vcfs(
                 ds = ds,
                 bins1 = BINS_equal_width,
@@ -239,7 +250,7 @@ def main(args: Args):
 
         # 4) Histogram - equal count
         print("MI hist equal count: ", end="")
-        MI_hist_equal_count = (
+        data_vars["MI_hist_equal_count"] = (
             mutual_information_with_height_from_vcfs(
                 ds = ds,
                 bins1 = BINS_equal_counts_atl09,
@@ -249,19 +260,18 @@ def main(args: Args):
         )
         print("success")
 
+        # including n_events and n_profiles
+        data_vars.update(
+            N_events = int(ds.collocation_event.size),
+            N_profiles = int(
+                (ds.n_profiles_atl09 * ds.n_profiles_cloudnet).sum()
+            )
+        )
+
         # create results dataset
         print(f"creating results dataset: ", end="")
         results_dataset = xr.Dataset(
-            data_vars = {
-                "MI_holmes_total": MI_holmes_total,  # float requires no extra dims
-                "MI_holmes_per_height": (["height"], MI_holmes_per_height), # array requires dims specifying
-                "MI_hist_equal_width": MI_hist_equal_width, # data array requires no further dims specifying
-                "MI_hist_equal_count": MI_hist_equal_count, # (above)
-                "N_events": int(ds.collocation_event.size), 
-                "N_profiles": int(
-                    (ds.n_profiles_atl09 * ds.n_profiles_cloudnet).sum()
-                ),
-            },
+            data_vars = data_vars,
             coords = {
                 "height": ds.coords["height"]
             }
