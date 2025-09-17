@@ -212,53 +212,53 @@ def main(args: Args):
         data_vars["MI_holmes_total"] = float(holmes.call_MI_xnyn(X=X, Y=Y, K=args.K))
         print("success")
 
-        # 2) Holmes - per height
-        print("MI holmes per height: ", end="")
-        if X.shape[1] < args.K:
-            print("skipping, insuffcient data for K={args.K}")
-        else:
-            data_vars["MI_holmes_per_height"] = ( # defined so that xr.Dataset can assign a height coordinate
-                ["height"],
-                np.array([
-                    holmes.call_MI_xnyn(
-                        X=np.atleast_2d(Xrow).reshape((1,-1)), 
-                        Y=np.atleast_2d(Yrow).reshape((1,-1)), 
-                        K=args.K
-                    )
-                    for Xrow, Yrow in zip(X,Y)
-                ]),
-            )
-            print("success")
+        ## 2) Holmes - per height
+        #print("MI holmes per height: ", end="")
+        #if X.shape[1] < args.K:
+        #    print("skipping, insuffcient data for K={args.K}")
+        #else:
+        #    data_vars["MI_holmes_per_height"] = ( # defined so that xr.Dataset can assign a height coordinate
+        #        ["height"],
+        #        np.array([
+        #            holmes.call_MI_xnyn(
+        #                X=np.atleast_2d(Xrow).reshape((1,-1)), 
+        #                Y=np.atleast_2d(Yrow).reshape((1,-1)), 
+        #                K=args.K
+        #            )
+        #            for Xrow, Yrow in zip(X,Y)
+        #        ]),
+        #    )
+        #    print("success")
 
-        # bins required for histograms
-        lift_degeneracy = lambda a: np.unique(a)
-        BINS_equal_width = np.linspace(0,1, args.n_bins+1)
-        BINS_equal_counts_atl09 = lift_degeneracy(np.quantile(X, BINS_equal_width))
-        BINS_equal_counts_cloudnet = lift_degeneracy(np.quantile(Y, BINS_equal_width))
+        ## bins required for histograms
+        #lift_degeneracy = lambda a: np.unique(a)
+        #BINS_equal_width = np.linspace(0,1, args.n_bins+1)
+        #BINS_equal_counts_atl09 = lift_degeneracy(np.quantile(X, BINS_equal_width))
+        #BINS_equal_counts_cloudnet = lift_degeneracy(np.quantile(Y, BINS_equal_width))
 
-        # 3) Histogram - equal width
-        print("MI hist equal width: ", end="")
-        data_vars["MI_hist_equal_width"] = (
-            mutual_information_with_height_from_vcfs(
-                ds = ds,
-                bins1 = BINS_equal_width,
-                bins2 = BINS_equal_width,
-            )
-                .rename("MI_hist_equal_width")
-        )
-        print("sucess")
+        ## 3) Histogram - equal width
+        #print("MI hist equal width: ", end="")
+        #data_vars["MI_hist_equal_width"] = (
+        #    mutual_information_with_height_from_vcfs(
+        #        ds = ds,
+        #        bins1 = BINS_equal_width,
+        #        bins2 = BINS_equal_width,
+        #    )
+        #        .rename("MI_hist_equal_width")
+        #)
+        #print("sucess")
 
-        # 4) Histogram - equal count
-        print("MI hist equal count: ", end="")
-        data_vars["MI_hist_equal_count"] = (
-            mutual_information_with_height_from_vcfs(
-                ds = ds,
-                bins1 = BINS_equal_counts_atl09,
-                bins2 = BINS_equal_counts_cloudnet,
-            )
-                .rename("MI_hist_equal_count")
-        )
-        print("success")
+        ## 4) Histogram - equal count
+        #print("MI hist equal count: ", end="")
+        #data_vars["MI_hist_equal_count"] = (
+        #    mutual_information_with_height_from_vcfs(
+        #        ds = ds,
+        #        bins1 = BINS_equal_counts_atl09,
+        #        bins2 = BINS_equal_counts_cloudnet,
+        #    )
+        #        .rename("MI_hist_equal_count")
+        #)
+        #print("success")
 
         # including n_events and n_profiles
         data_vars.update(
