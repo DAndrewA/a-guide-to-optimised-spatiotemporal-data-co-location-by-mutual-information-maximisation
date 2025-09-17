@@ -20,7 +20,7 @@ echo "dir_out = ${dir_out}"
         --dir-vcfs $dir_vcfs \
         --dir-out $out_dir \
         --site $site \
-        --index-function "R_150km_tau_172800s" \
+        --index-function "R_500km_tau_172800s" \
         -K 20 \
         --N-bins 50
 )
