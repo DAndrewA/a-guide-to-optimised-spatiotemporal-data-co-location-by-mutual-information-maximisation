@@ -21,7 +21,7 @@ class InvalidIndexError(ValueError):
     pass
 
 
-def register_index_function(name: str, R: np.ndarray, tau: np.ndarray):
+def register_index_function_product(name: str, R: np.ndarray, tau: np.ndarray):
     MAX_INDEX = R.size * tau.size
     def index_function(index: int) -> Parametrisation:
         if index < 0 or index >= MAX_INDEX:
@@ -39,16 +39,36 @@ def register_index_function(name: str, R: np.ndarray, tau: np.ndarray):
     index_function.MAX_INDEX = MAX_INDEX
     index_function.__name__ = name
     INDEX_FUNCTIONS[name] = index_function
+
+
+def register_index_function(name: str, R: np.ndarray, tau: np.ndarray):
+    assert np.asarray(R).shape == np.asarray(tau).shape
+    MAX_index = np.asarray(R).size
+    def index_function(index: int) -> Parametrisation:
+        if index < 0 or index >= MAX_index:
+            raise InvalidIndexError(index)
+
+        R_km = float(R[index])
+        tau_s = int(tau[index])
+
+        return Parametrisation(
+            distance_km = R_km,
+            tau = dt.timedelta(seconds=tau_s)
+        )
+    index_function.MAX_INDEX = MAX_INDEX
+    index_function.__name__ = name
+    INDEX_FUNCTIONS[name] = index_function
+
     
 
-register_index_function(
+register_index_function_product(
     name = "original",
     R = np.arange(5,151,5),
     tau = np.arange(300,4501,300),
 )
 
 
-register_index_function(
+register_index_function_product(
     name = "extended_tau_meshgrid",
     R = np.concatenate([
         np.arange(5,50,5),
@@ -66,7 +86,7 @@ register_index_function(
 )
 
 
-register_index_function(
+register_index_function_product(
     name = "R_150km_tau_172800s",
     R = np.concatenate([
         np.arange(5,50,5),
@@ -87,7 +107,7 @@ register_index_function(
 )
 
 
-register_index_function(
+register_index_function_product(
     name="R_500km_tau_172800s",
     R = np.concatenate([
         [5],
@@ -104,4 +124,31 @@ register_index_function(
         np.arange(64800, 172800, 21600), # 18,24,30,...,48 hours
         [172800]
     ])
+)
+
+R_lit_opt = [50,50,500,500,100]
+tau_lit_opt = [1800,172800,1800,172800,3600]
+
+register_index_function(
+    "R_tau_extremal_lit_opt_ny-alesund",
+    R = R_lit_opt + [60]
+    tau = tau_lit_opt + [21600],
+)
+
+register_index_function(
+    "R_tau_extremal_lit_opt_hyytiala",
+    R = R_lit_opt + [180.9]
+    tau = tau_lit_opt + [28800],
+)
+
+register_index_function(
+    "R_tau_extremal_lit_opt_juelich",
+    R = R_lit_opt + [214.3]
+    tau = tau_lit_opt + [43200],
+)
+
+register_index_function(
+    "R_tau_extremal_lit_opt_munich",
+    R = R_lit_opt + [140.3]
+    tau = tau_lit_opt + [14400],
 )
