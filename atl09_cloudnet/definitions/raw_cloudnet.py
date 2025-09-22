@@ -16,7 +16,8 @@ from sat_val_framework.implement import (
 
 from . import (
     cloudnet_decode, 
-    vcf
+    vcf,
+    acf
 )
 
 from typing import ClassVar
@@ -139,6 +140,18 @@ class RawCloudnet(RawData):
         return self
 
 
+    def _homogenise_to_ACF(self, H: Type[acf.ACF]) -> acf.ACF:
+        areal_cloud_fraction = float(
+            (self.data.qc_cloudmask)
+                .any(dim="height")
+                .mean()
+        )
+        return H(
+            data = areal_cloud_fraction,
+            metadata = self.metadata
+        )
+
+
     def _homogenise_to_VCF(self, H: Type[vcf.VCF]) -> vcf.VCF:
         vertical_cloud_fraction = (
             (self.data.qc_cloudmask)
@@ -161,6 +174,8 @@ class RawCloudnet(RawData):
         assert issubclass(H, HomogenisedData), f"{H} must be a subclass of {HomogenisedData}"
         if issubclass(H, vcf.VCF):
             return self._homogenise_to_VCF(H)
+        elif issubclass(H, acf.ACF):
+            return self._homogenise_to_ACF(H)
         raise TypeError(f"{type(self)} does not implement homogenise_to({H})")
 
     @staticmethod
