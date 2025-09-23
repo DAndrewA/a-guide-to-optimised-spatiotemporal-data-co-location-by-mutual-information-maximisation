@@ -29,6 +29,7 @@ SITES = {
     "juelich": dict(lat=50.908, lon=6.413), 
     "munich": dict(lat=48.148, lon=11.573),
 }
+ACF_TYPE = acf.ACF_10
 
 
 
@@ -148,12 +149,10 @@ def pair_acf_dataset_from_collocated_homogenised_data(coll_H):
     """
     acf_atl09 = coll_H[RawATL09].data
     acf_cloudnet = coll_H[RawCloudnet].data
-    return xr.Dataset(
-        data_vars = {
-            "acf_atl09": ((), acf_atl09),
-            "acf_cloudnet": ((), acf_cloudnet),
-        },
-    ).copy(deep=True)
+    return xr.merge([
+        acf_atl09.rename("acf_atl09"),
+        acf_cloudnet.rename("acf_cloudnet"),
+    ]).copy(deep=True)
 
 
 
@@ -267,7 +266,7 @@ def main(args: Args):
         )
 
         if (
-            collocated_h := make_safe(raw_data_pair.homogenise_to)(acf.ACF)
+            collocated_h := make_safe(raw_data_pair.homogenise_to)(ACF_TYPE)
         )[1] # make_safe success value
         else (
             None,
@@ -324,14 +323,10 @@ def main(args: Args):
     return
 
 
-    
 
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    args = parse_args()
+    print(args)
+    main(args=args)
+    print("\n\n\n\n\n")
+    print("SCRIPT SUCCESS")
