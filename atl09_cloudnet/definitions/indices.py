@@ -43,9 +43,9 @@ def register_index_function_product(name: str, R: np.ndarray, tau: np.ndarray):
 
 def register_index_function(name: str, R: np.ndarray, tau: np.ndarray):
     assert np.asarray(R).shape == np.asarray(tau).shape
-    MAX_index = np.asarray(R).size
+    MAX_INDEX = np.asarray(R).size
     def index_function(index: int) -> Parametrisation:
-        if index < 0 or index >= MAX_index:
+        if index < 0 or index >= MAX_INDEX:
             raise InvalidIndexError(index)
 
         R_km = float(R[index])
@@ -131,24 +131,24 @@ tau_lit_opt = [1800,172800,1800,172800,3600]
 
 register_index_function(
     "R_tau_extremal_lit_opt_ny-alesund",
-    R = R_lit_opt + [60]
+    R = R_lit_opt + [60],
     tau = tau_lit_opt + [21600],
 )
 
 register_index_function(
     "R_tau_extremal_lit_opt_hyytiala",
-    R = R_lit_opt + [180.9]
+    R = R_lit_opt + [180.9],
     tau = tau_lit_opt + [28800],
 )
 
 register_index_function(
     "R_tau_extremal_lit_opt_juelich",
-    R = R_lit_opt + [214.3]
+    R = R_lit_opt + [214.3],
     tau = tau_lit_opt + [43200],
 )
 
 register_index_function(
     "R_tau_extremal_lit_opt_munich",
-    R = R_lit_opt + [140.3]
+    R = R_lit_opt + [140.3],
     tau = tau_lit_opt + [14400],
 )
