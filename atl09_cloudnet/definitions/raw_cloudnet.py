@@ -141,13 +141,14 @@ class RawCloudnet(RawData):
 
 
     def _homogenise_to_ACF(self, H: Type[acf.ACF]) -> acf.ACF:
-        areal_cloud_fraction = float(
-            (self.data.qc_cloudmask)
-                .any(dim="height")
-                .mean()
+        areal_cloud_fraction_by_threshold = (
+            ((self.data.qc_cloudmask == 1)
+                .mean(dim="height") >= H.thresholds )
+                .mean(dim=["time"])
+                .rename("ACF")
         )
         return H(
-            data = areal_cloud_fraction,
+            data = areal_cloud_fraction_by_threshold,
             metadata = self.metadata
         )
 

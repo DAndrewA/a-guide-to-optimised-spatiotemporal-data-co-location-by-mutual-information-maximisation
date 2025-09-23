@@ -275,13 +275,14 @@ class RawATL09(RawData):
 
 
     def _homogenise_to_ACF(self, H: Type[acf.ACF]) -> acf.ACF:
-        areal_cloud_fraction = float(
-            (self.data.feature_mask == 1)
-                .any(dim=["height"])
-                .mean()
+        areal_cloud_fraction_by_threshold = (
+            ((self.qc_feature_mask == 1)
+                .mean(dim=["height"]) >= H.thresholds )
+                .mean(dim=["profile", "time_index"])
+                .rename("ACF")
         )
         return H(
-            data = areal_cloud_fraction,
+            data = areal_cloud_fraction_by_threshold,
             metadata = self.metadata
         )
 

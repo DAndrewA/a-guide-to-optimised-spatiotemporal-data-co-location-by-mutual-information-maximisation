@@ -12,13 +12,30 @@ import numpy as np
 
 
 
-class ACF(HomogenisedData):
-    """Homogenised data for the areal cloud fraction from a given data source.
-    This is defined as the fraction of vertical profiles included in the analysis that contain any amount of cloud.
-    This is simply stored as a float to the data field, that must be between 0 and 1.
+class CommonACFThresholds:
+    """Class holding threshold values for calculating ACF values, requiring certain column cloud fractions to be met.
     """
+    def __init__(self, values: np.ndarray):
+        assert ( np.asarray(values) >= 0 & np.asarray(values) <= 1).all(), f"ACF threshold values must be between 0 and 1."
+        self.values = np.sort(values)
+
+
+
+class ACF(HomogenisedData):
+    thresholds = None
 
     def assert_on_creation(self):
-        assert isinstance(self.data, float), f"homogenised data should be of type float, is type {self.data}".
-        assert self.data >= 0 and self.data <= 1, f"self.data should be bounded in the interval [0,1], has value {self.data}"
+        assert isinstance(self.thresholds, CommonACFThresholds), f"Use an implementation of ACF with thresholds attribute set."
+        assert isinstance(self.data, xr.DataArray), f"Homogenised data should be of type {xr.DataArray}, is {type(self.data)}"
 
+        assert (
+            (self.data >= 0).all()
+            & (self.data <= 1).all()
+        ), f"All areal cloud fractions must be within bounds [0,1]"
+
+
+
+class ACF_10(ACF):
+    thresholds = CommonACFThresholds(
+        values=np.arange(0,1,0.1)
+    )
