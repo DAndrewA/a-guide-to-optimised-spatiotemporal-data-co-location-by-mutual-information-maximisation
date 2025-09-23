@@ -16,7 +16,8 @@ class CommonACFThresholds:
     """Class holding threshold values for calculating ACF values, requiring certain column cloud fractions to be met.
     """
     def __init__(self, values: np.ndarray):
-        assert ( np.asarray(values) >= 0 & np.asarray(values) <= 1).all(), f"ACF threshold values must be between 0 and 1."
+        assert ( (np.asarray(values) >= 0) 
+                 & (np.asarray(values) <= 1)).all(), f"ACF threshold values must be between 0 and 1."
         self.values = np.sort(values)
 
 
