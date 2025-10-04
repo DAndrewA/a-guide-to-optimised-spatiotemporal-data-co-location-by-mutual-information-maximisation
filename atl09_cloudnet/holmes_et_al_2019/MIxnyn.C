@@ -123,8 +123,8 @@ extern "C" {
 
 
       mir_xnyn(x,dimx,dimy,N,K,psi,scal,&mir);
-      fprintf(stdout,"%1.8f\n",mir);
-      fflush(stdout);
+      //fprintf(stdout,"%1.8f\n",mir);
+      //fflush(stdout);
 
        
 

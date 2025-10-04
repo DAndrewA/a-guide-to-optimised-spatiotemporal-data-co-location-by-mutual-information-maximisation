@@ -43,10 +43,10 @@ def call_MI_xnyn(X: np.ndarray,Y:np.ndarray,K:int) -> np.ndarray:
     for i in range(input_x.shape[0]):
         x_ptrs[i] = input_x[i].ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 
-    print(dimx, dimy, K, N)
-    print(x_ptrs)
-    print(input_x.shape)
-    print(MI)
+    #print(dimx, dimy, K, N)
+    #print(x_ptrs)
+    #print(input_x.shape)
+    #print(MI)
     # Call the function
     LIB.MIxnyn(
         x_ptrs,
@@ -56,7 +56,7 @@ def call_MI_xnyn(X: np.ndarray,Y:np.ndarray,K:int) -> np.ndarray:
         N,
         ctypes.byref(MI)
     )
-    print(f"Result: {MI=}")
-    print(f"{MI.value=}")
+    #print(f"Result: {MI=}")
+    #print(f"{MI.value=}")
     return MI.value
 
