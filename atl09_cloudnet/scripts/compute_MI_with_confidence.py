@@ -258,14 +258,18 @@ def process_single_parametrisation(
 
     data_vars = dict()
 
-    # compute the Holmes MI value
-    if verbose: print("MI holmes total: ", end="")
-    MI_total = float(holmes.call_MI_xnyn(X=X, Y=Y, K=args.K))
-    if verbose: 
-        print("success")
+    # use my holmes implementation of MIEstimate
+    MI_estimate = holmes.MIEstimate.from_XYKMn_with_RNG(
+        X = X,
+        Y = Y,
+        K = args.K,
+        M = args.n_B_repeats, # number of repeated computations of sigma_KSG_i for computing sigma_KSG(n_samples)
+        n_splits = args.n_splits, # number of splits, n_i, per computation of sigma_KSG_i
+        n_samples = N_events, # assertion to ensure data passed to estimators correctly
+        RNG = RNG, # controls M permutations of X and Y for computing std_MI
+    )
 
-    # Compute a distribution of MI values for independent samples
-        print("computing independent MI values: ", end="")
+    # compute a distribution of MI values for independent shufflings of the input data
     MI_independent = generate_independent_MI_values(
         X = X,
         Y = Y,
@@ -273,64 +277,33 @@ def process_single_parametrisation(
         K = args.K,
         rng = RNG
     )
-    if verbose: print("yay")
 
-    # estimate the standard deviation of the mutual information estimator
-    # the standard deviation estimate will depend on the particular partitioning of samples.
-    # Thus, we compute the mean over 10 iterations of computing the standard deviation
-    if verbose: print("estimating B(MI): ", end="")
-    B_lit, B_corrected = estimate_B_ML(
-        X = X,
-        Y = Y,
-        n_splits = args.n_splits,
-        n_repeats = args.n_B_repeats,
-        K = args.K,
-        rng = RNG,
-    )
-    sigma_lit = B_lit
-    sigma_lit_corrected = B_lit / N_events
-    sigma_corrected = B_corrected / N_events
-    if verbose: print("yay")
-
-    B_DOF = args.n_B_repeats# * (args.n_splits - 1) 
-
-    # compute p-values using an unpaired Welch's t-test (non-equal variance) to show that the computed MI values are not drawn from the same distribution as the independent MI samples.
-    (ind_pvalue_lit, ind_pvalue_lit_corrected, ind_pvalue_corrected) = [
-        stats.ttest_ind_from_stats(
-            mean1 = MI_total,
-            std1 = std,
-            nobs1 = B_DOF,
-            mean2 = np.mean(MI_independent),
-            std2 = np.std(MI_independent),
-            nobs2 = args.n_bootstraps,
-            equal_var=False,
-        ).pvalue
-        for std in (sigma_lit, sigma_lit_corrected, sigma_corrected)
-    ]
+    # compute p-value using an unpaired Welch's t-test (non-equal variance) to show that the computed MI values are not drawn from the same distribution as the independent MI samples.
+    pvalue_independent = stats.ttest_ind_from_stats(
+        mean1 = MI_estimate.MI,
+        std1 = MI_estimate.std,
+        nobs1 = MI_estimate.ddof,
+        mean2 = np.mean(MI_independent),
+        std2 = np.std(MI_independent),
+        nobs2 = args.n_bootstraps,
+        equal_var=False,
+    ).pvalue
 
     if verbose: 
-        print(f"MI({R_km} km, {tau_s} s) = {MI_total}")
-        print(f"std: lit =  {sigma_lit}")
-        print(f"independent p-value: lit =  {ind_pvalue_lit}")
-        print(f"std: lit corrected =  {sigma_lit_corrected}")
-        print(f"independent p-value: lit corrected =  {ind_pvalue_lit_corrected}")
-        print(f"std: corrected =  {sigma_corrected}")
-        print(f"independent p-value: corrected =  {ind_pvalue_corrected}")
+        print(f"I_KSG({R_km} km, {tau_s} s) = {MIEstimate.MI}")
+        print(f"std_KSG =  {MI_estimate.std}")
+        print(f"independent p-value=  {pvalue_independent}")
     
-    data_vars["MI"] = MI_total
-    data_vars["sigma_lit"] = sigma_lit
-    data_vars["sigma_lit_corrected"] = sigma_lit_corrected
-    data_vars["sigma_corrected"] = sigma_corrected
-    data_vars["ind_pvalue_lit"] = ind_pvalue_lit
-    data_vars["ind_pvalue_lit_corrected"] = ind_pvalue_lit_corrected
-    data_vars["ind_pvalue_corrected"] = ind_pvalue_corrected
+    data_vars["MI"] = MI_estimate.MI
+    data_vars["std"] = MI_estimate.std
+    data_vars["pvalue_independent"] = pvalue_independent
     # including n_events and n_profiles
     data_vars["N_events"] = N_events
     data_vars["N_profiles"] = int(
         (ds.n_profiles_atl09 * ds.n_profiles_cloudnet).sum()
     )
-    data_vars["n_splits_std"] = args.n_splits
-    data_vars["B_DOF"] = B_DOF
+    data_vars["n_splits_std"] = MI_estimate.n_splits
+    data_vars["std_ddof"] = MI_estimate.ddof
 
     # create results dataset
     if verbose: print(f"creating results dataset: ", end="")
