@@ -187,7 +187,8 @@ def generate_independent_MI_values(X: np.ndarray, Y: np.ndarray, n_bootstraps: i
             holmes.call_MI_xnyn(
                 X = X_bootstrap,
                 Y = Y_bootstrap,
-                K = K
+                K = K,
+                n_samples = N_events
             )
         )
     return np.array(MI_independent_values)
@@ -289,14 +290,21 @@ def process_single_parametrisation(
         equal_var=False,
     ).pvalue
 
+    # also compute the t-statistic and p value directly for a null hypothesis that the mean of the distribution MI is zero
+    t_statistic_direct = MI_estimate.MI / ( MI_estimate.std / np.sqrt(MI_estimate.ddof + 1) )
+    pvalue_independent_direct = 2 * (1 - stats.t.cdf(np.abs(t_statistic_direct), df=MI_estimate.ddof))
+
     if verbose: 
-        print(f"I_KSG({R_km} km, {tau_s} s) = {MIEstimate.MI}")
+        print(f"I_KSG({R_km} km, {tau_s} s) = {MI_estimate.MI}")
         print(f"std_KSG =  {MI_estimate.std}")
         print(f"independent p-value=  {pvalue_independent}")
+        print(f"t-statistic direct = {t_statistic_direct}")
+        print(f"independent p-value direct =  {pvalue_independent_direct}")
     
     data_vars["MI"] = MI_estimate.MI
     data_vars["std"] = MI_estimate.std
-    data_vars["pvalue_independent"] = pvalue_independent
+    data_vars["pvalue_independent_bootstrap"] = pvalue_independent
+    data_vars["pvalue_independent_direct"] = pvalue_independent_direct
     # including n_events and n_profiles
     data_vars["N_events"] = N_events
     data_vars["N_profiles"] = int(
