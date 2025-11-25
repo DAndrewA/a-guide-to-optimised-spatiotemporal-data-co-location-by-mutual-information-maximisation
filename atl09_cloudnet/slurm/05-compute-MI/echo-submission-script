@@ -1,10 +1,12 @@
 scratch_dir=$SCRATCH/MI_oe
 
-for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
-    job_name="compute_MI_${site}";
-    slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=1:00:00 --mem=15G --job-name=${job_name} -o ${scratch_dir}/${job_name}_%a.o -e ${scratch_dir}/${job_name}_%a.e --array=0-780 job-compute-MI.sh ${site}";
-    echo "#${site}";
-    echo "${slurm_command}";
-    echo "";
+for K in 1 2 4 10 20; do
+    for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
+        job_name="compute_MI_${site}_K${K}";
+        slurm_command="sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=${job_name} -o ${scratch_dir}/${job_name}_%a.o -e ${scratch_dir}/${job_name}_%a.e --array=0-780 job-compute-MI.sh ${site} ${K}";
+        echo "#${site}";
+        echo "${slurm_command}";
+        echo "";
+    done
 done
 

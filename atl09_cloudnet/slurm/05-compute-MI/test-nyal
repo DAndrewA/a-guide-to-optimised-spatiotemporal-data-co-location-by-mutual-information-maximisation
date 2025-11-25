@@ -1,0 +1,10 @@
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=compute_MI_ny-alesund_K1 -o /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K1_%a.o -e /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K1_%a.e --array=0,1,10,100,779,780 job-compute-MI.sh ny-alesund 1
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=compute_MI_ny-alesund_K2 -o /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K2_%a.o -e /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K2_%a.e --array=0,1,10,100,779,780 job-compute-MI.sh ny-alesund 2
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=compute_MI_ny-alesund_K4 -o /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K4_%a.o -e /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K4_%a.e --array=0,1,10,100,779,780 job-compute-MI.sh ny-alesund 4
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=compute_MI_ny-alesund_K10 -o /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K10_%a.o -e /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K10_%a.e --array=0,1,10,100,779,780 job-compute-MI.sh ny-alesund 10
+#ny-alesund
+sbatch --partition=standard --qos=standard --account=icecaps --time=3:00:00 --mem=15G --job-name=compute_MI_ny-alesund_K20 -o /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K20_%a.o -e /work/scratch-nopw2/eeasm/MI_oe/compute_MI_ny-alesund_K20_%a.e --array=0,1,10,100,779,780 job-compute-MI.sh ny-alesund 20
