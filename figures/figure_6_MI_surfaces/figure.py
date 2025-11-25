@@ -11,7 +11,7 @@ from common.handle_sites import SITES
 from common.MI_plots import (
     DIR_MI,
     TEX_MI, TEX_R, TEX_tau,
-    PLOT_ARGS, 
+    PLOT_ARGS, FIGSIZE,
     K, 
     R_ticks, TAU_ticks, TAU_ticks_minor,
     R_slice,
@@ -26,8 +26,6 @@ import os
 import matplotlib.pyplot as plt
 
 from matplotlib.colors import Normalize
-
-FIGSIZE = (4,3)
 
 
 

@@ -28,6 +28,8 @@ PLOT_ARGS = lambda : dict(
     y = "tau_s",
 )
 
+FIGSIZE = (4,3)
+
 TEX_MI = r"$\hat{\text{I}}_\text{KSG} ( \boldsymbol{p} )$ (bits)"
 TEX_N_events = r"$N_\text{events}$"
 TEX_N_profiles = r"$N_\text{profiles}$"
