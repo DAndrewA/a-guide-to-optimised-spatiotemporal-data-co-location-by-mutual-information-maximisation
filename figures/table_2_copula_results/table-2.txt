@@ -1,0 +1,27 @@
+
+%t
+\begin{table*}[t]
+\caption{
+
+    Results from the computation of copulae comparing VCF values between ATL09 and Cloudnet data for all the tested parametrisations.
+    The accuracy of the agreement between the VCF retrievals for the categories nc, pc and tc (see Figure \ref{fig::copulae}) is given as $\text{ACC}$.
+    $c_\text{min}$ is the minimum copula density for the given parametrisation, $c_\text{max}$ is the maximum achieved copula density, and $c(1,1)$ is the discretised tail dependence of the copula.
+    $\text{RMSD}$ is the root mean squared difference of the copula density from the independence copula density.
+    Values in bold indicate the best parametrisation for the given metric (the notion of best being defined in the text).
+    
+}
+\label{table::copulae}
+\begin{tabular}{lccccccr}
+\tophline
+    parametrisation & $R$ (\unit{km}) & $\tau$ (\unit{s}) & $\text{ACC}$ & $c_\text{min}$ & $c_\text{max}$ & c(1,1) & $\text{RMSD}$ \\
+\middlehline
+
+$\vec{p}_{00}$ & $0.0$ & 0 & $0.751$ & $0.44$ & $1.65$ & $1.05$ & $0.21$
+$\vec{p}_{11}$ & $0.0$ & 0 & $0.734$ & $0.49$ & $2.09$ & $0.91$ & $0.22$
+$\vec{p}_\text{lit.}$ & $0.0$ & 0 & $\mathbf{0.762}$ & $0.50$ & $1.86$ & $1.21$ & $0.24$
+$\hat{\vec{p}}$ & $0.0$ & 0 & $0.759$ & $\mathbf{0.41}$ & $\mathbf{2.27}$ & $\mathbf{1.70}$ & $\mathbf{0.27}$
+
+\bottomhline
+\end{tabular}
+\belowtable{} % Table Footnotes
+\end{table*}

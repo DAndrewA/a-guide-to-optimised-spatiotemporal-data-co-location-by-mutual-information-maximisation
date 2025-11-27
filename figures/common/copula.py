@@ -19,6 +19,10 @@ from dataclasses import dataclass
 COPULA_bins = 25
 
 
+def fill_non_finite(da: xr.DataArray, v=np.nan) -> xr.DataArray:
+    return da.copy().where(np.isfinite(da), v)
+
+
 @dataclass
 class BivariateCopula:
     data: xr.DataArray
@@ -81,10 +85,12 @@ class BivariateCopula:
     @property
     def density(self) -> xr.DataArray:
         return (
-            self.data
-                .differentiate(coord="u")
-                .differentiate(coord="v")
-                .clip(min=0)
+            fill_non_finite(
+                self.data
+                    .differentiate(coord="u")
+                    .differentiate(coord="v")
+            )
+            .clip(min=0)
         )
 
 

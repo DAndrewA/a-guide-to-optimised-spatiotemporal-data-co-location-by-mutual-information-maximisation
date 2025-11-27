@@ -14,10 +14,8 @@ from common.colormaps import (
     MAPPABLE_copula, MAPPABLE_probability
 )
 from common.handle_MI_datasets import (
-    get_MI_with_subsetting,
     K
 )
-from common.handle_sites import SITES, SITE_argument_names
 from common.handle_vcfs import vcfs_per_parametrisation, generate_confusion_matrix, generate_masks
 from common.copula import BivariateCopula, patheffects
 

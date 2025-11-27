@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2025-11-27T16:32:39.206749</dc:date>
+    <dc:date>2025-11-27T17:02:06.150653</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,18 +40,18 @@ z
 " style="fill: none"/>
    </g>
    <image xlink:href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAAB8AAAEWCAYAAACe1kxFAAABhElEQVR4nO2dwXHDQAzEyDO/aSN1uP+mkjLwANDADcXlcuWRpf39+f4NxKMOnpm53cUORytnL/v7cOcnOITbZ+35+3yww1M7gtfhEhxC9oqQ2hHEatf2HDYZreC0SebGOmpitYsXy5OqvVFD8CYZscl41a4NE6VXhOwVIXtF8Nqrt+fZK0L2ipC9Ioh73g9CBOLF4h217JWgyhEOFLt5sZgFp7VXb+XW9HpvtJVbe57JIBx5ej1HODC8wpVzj1lnrxCNGoJ31MQ9B8MrrnapwzVqCOLc7u25d6V6F4t2zrvsCGKTMS8WaXo199y6UlssCFWOUOUI3hjVjSKCetSs6VVrMuV2BPFiEQsOPJweNetiMYcJjh4x9x3u3edie13vHYv1+XZxz/tPA4H6z3Lc4fUc4ba3pAGI7dX7DiHtW1Vun/Y7DVp79b7YRNvz9jmCeKVOHwACyF4RvCs1wSHceHO7+F5Nq3btnGvDRIsF4WatlYt7rq08eyVIcAilV4TUjoBW/g/yggaMxIrXZgAAAABJRU5ErkJggg==" id="image476736dc75" transform="scale(1 -1) translate(0 -200.16)" x="7.2" y="-10.8" width="22.32" height="200.16"/>
+iVBORw0KGgoAAAANSUhEUgAAAB8AAAEWCAYAAACe1kxFAAABhElEQVR4nO2dwXHDQAzEyDO/aSN1uP+mkjLwANDADcXlcuWRpf39+f4NxKMOnpm53cUORytnL/v7cOcnOITbZ+35+3yww1M7gtfhEhxC9oqQ2hHEatf2HDYZreC0SebGOmpitYsXy5OqvVFD8CYZscl41a4NE6VXhOwVIXtF8Nqrt+fZK0L2ipC9Ioh73g9CBOLF4h217JWgyhEOFLt5sZgFp7VXb+XW9HpvtJVbe57JIBx5ej1HODC8wpVzj1lnrxCNGoJ31MQ9B8MrrnapwzVqCOLc7u25d6V6F4t2zrvsCGKTMS8WaXo199y6UlssCFWOUOUI3hjVjSKCetSs6VVrMuV2BPFiEQsOPJweNetiMYcJjh4x9x3u3edie13vHYv1+XZxz/tPA4H6z3Lc4fUc4ba3pAGI7dX7DiHtW1Vun/Y7DVp79b7YRNvz9jmCeKVOHwACyF4RvCs1wSHceHO7+F5Nq3btnGvDRIsF4WatlYt7rq08eyVIcAilV4TUjoBW/g/yggaMxIrXZgAAAABJRU5ErkJggg==" id="image7aec2f0364" transform="scale(1 -1) translate(0 -200.16)" x="7.2" y="-10.8" width="22.32" height="200.16"/>
    <g id="matplotlib.axis_1"/>
    <g id="matplotlib.axis_2">
     <g id="ytick_1">
      <g id="line2d_1">
       <defs>
-       <path id="m24c331f7c9" d="M 0 0 
+       <path id="mc120302fc5" d="M 0 0 
 L 3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m24c331f7c9" x="29.457933" y="211.320614" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mc120302fc5" x="29.457933" y="211.320614" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
@@ -87,7 +87,7 @@ z
     <g id="ytick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#m24c331f7c9" x="29.457933" y="10.999219" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mc120302fc5" x="29.457933" y="10.999219" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
