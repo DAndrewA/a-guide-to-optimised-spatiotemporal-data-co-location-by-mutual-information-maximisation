@@ -14,28 +14,18 @@ from itertools import product
 from typing import Callable
 
 from .colormaps import CMAP_MI
-
-# directory within which the MI_merged.nc data file resides
-DIR_MI = os.path.join(
-    os.environ["SCRATCH"],
-    "MI"
-)
-
-K = 10
+from .common import PANEL_SIZE as FIGSIZE
 
 PLOT_ARGS = lambda : dict(
     x = "R_km",
     y = "tau_s",
 )
 
-FIGSIZE = (4,3)
-
 TEX_MI = r"$\hat{\text{I}}_\text{KSG} ( \boldsymbol{p} )$ (bits)"
 TEX_N_events = r"$N_\text{events}$"
 TEX_N_profiles = r"$N_\text{profiles}$"
 TEX_R = r"$R$ (km)"
 TEX_tau = r"$\tau$ (hours)"
-
 
 R_ticks = (
     _temp:=[50, 100, 500],
@@ -57,11 +47,7 @@ TAU_ticks_minor = (
     [None]*len(mticks)
 )
 
-R_slice = slice(15,None,None)
-
-
-
-def within_max_MI_pvalue(ds: xr.Dataset, std_var: str) -> xr.DataArray:
+def within_max_MI_pvalue(ds: xr.Dataset, std_var: str = "std") -> xr.DataArray:
     MI_max_pvalues = xr.zeros_like(ds.MI, dtype=float)
     argmax = ds.MI.argmax(dim=["R_km","tau_s"])
     ds_argmax = ds.isel(argmax)

@@ -8,13 +8,11 @@ import sys
 sys.path.insert(1, "../")
 from common.colormaps import CMAP_N_events, CMAP_N_profiles, CMAP_MI
 from common.handle_sites import SITES
+from common.handle_MI_datasets import get_MI_with_subsetting, K
 from common.MI_plots import (
-    DIR_MI,
     TEX_MI, TEX_R, TEX_tau,
     PLOT_ARGS, FIGSIZE,
-    K, 
     R_ticks, TAU_ticks, TAU_ticks_minor,
-    R_slice,
     within_max_MI_pvalue,
     plot_data_with_maxMI_and_significance,
 )
@@ -55,17 +53,7 @@ def plot_mutual_information_panel(ds: xr.Dataset) -> (plt.Figure, list[plt.Axes]
 
 
 print("Loading dataset: ", end="")
-ds_full = xr.load_dataset(
-    os.path.join(
-        DIR_MI,
-        "MI_merged.nc"
-    )
-).drop_dims("height").sel(
-    dict(
-        R_km=R_slice,
-        K=K,
-    )
-)
+ds_full = get_MI_with_subsetting()
 print("success")
 print(ds_full)
 for site in SITES:

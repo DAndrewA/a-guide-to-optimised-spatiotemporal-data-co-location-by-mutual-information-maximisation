@@ -18,3 +18,6 @@ CMAP_MI = ListedColormap(
 )
 
 CMAP_copula = cm.vik
+
+NORM_probability = Normalize(vmin=0, vmax=1)
+NORM_copula = CenteredNorm(vcenter=1, halfrange=0.75)

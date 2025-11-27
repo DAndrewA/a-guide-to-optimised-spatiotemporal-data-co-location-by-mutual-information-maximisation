@@ -1,37 +1,29 @@
 """Common functions for loading in the mutual information data"""
 
+from .common import DIR_ROOT
+
 import os
 import xarray as xr
 
 HEIGHT_SLICE = slice(1000,10_000)
 R_slice = slice(25,None,None)
 
-RESULTS_DIR = "/work/scratch-nopw2/eeasm/MI/old1_K20_no_std"
+FPATH_MI = os.path.join(
+    DIR_ROOT, "MI", "MI_merged.nc"
+)
 
 
-def load_dataset_from_site(site: str) -> xr.Dataset:
+K = 10
+R_slice = slice(15,None,None)
+
+def get_MI_with_subsetting(**subset) -> xr.Dataset:
+    """Returns the MI_merged dataset, subset by any additional specified parameters.
+    NOTE: The dataset is pre-subset by K=10 and R=R_slice.
+    """
     return (
-        xr.open_dataset(
-            os.path.join(
-                RESULTS_DIR,
-                f"MI_{site}.nc"
-            )
-        )
-            .sel(height=HEIGHT_SLICE).mean(dim="height")
-            .sel(R_km=R_slice)
+        xr.open_dataset(FPATH_MI)
+            .drop_dims("height")
+            .sel(dict(K=K, R_km=R_slice))
+            .sel(subset)
     )
 
-
-def MI_from_ds(ds: xr.Dataset) -> xr.DataArray:
-    return ds.MI_holmes_total
-
-def N_events_from_ds(ds: xr.Dataset) -> xr.DataArray:
-    return ds.N_events
-
-def N_profiles_from_ds(ds: xr.Dataset) -> xr.DataArray:
-    return ds.N_profiles
-
-def ds_at_max_value(ds: xr.Dataset, value: xr.DataArray) -> xr.Dataset:
-    """return the dataset ds, subset to the argmax of the dataarray value"""
-    argmax = value.argmax(...)
-    return ds.isel(argmax)

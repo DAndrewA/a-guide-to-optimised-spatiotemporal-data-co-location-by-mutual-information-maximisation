@@ -7,13 +7,14 @@ Script implementing the code from figure_4_5_MIs.ipynb, to generate panels for t
 import sys
 sys.path.insert(1, "../")
 from common.colormaps import CMAP_N_events, CMAP_N_profiles, CMAP_MI
+from common.handle_MI_datasets import (
+    get_MI_with_subsetting,
+    K,
+)
 from common.MI_plots import (
-    DIR_MI,
     TEX_MI, TEX_R, TEX_tau, TEX_N_events, TEX_N_profiles,
     PLOT_ARGS, FIGSIZE,
-    K, 
     R_ticks, TAU_ticks, TAU_ticks_minor,
-    R_slice,
     within_max_MI_pvalue,
     plot_data_with_maxMI_and_significance
 )
@@ -80,18 +81,7 @@ def plot_results(ds) -> (plt.Figure, list[plt.Axes]):
 
 
 print("Loading dataset: ", end="")
-ds = xr.load_dataset(
-    os.path.join(
-        DIR_MI,
-        "MI_merged.nc"
-    )
-).drop_dims("height").sel(
-    dict(
-        R_km=R_slice,
-        site=SITE,
-        K=K,
-    )
-)
+ds = get_MI_with_subsetting(site=SITE)
 print("success")
 print(ds)
 print("Computing pvalues")
