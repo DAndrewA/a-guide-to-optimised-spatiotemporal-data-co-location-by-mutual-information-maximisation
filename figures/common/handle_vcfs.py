@@ -1,17 +1,18 @@
 """Common functions to handle loading of VCFs for given parametrisations, including p_opt at each site"""
 
-from handle_MI_datasets import get_MI_with_subsetting, K, R_slice
-from handle_sites import SITES, SITE_argument_names
+from .common import DIR_ROOT
+from .handle_MI_datasets import get_MI_with_subsetting
+from .handle_sites import SITES, SITE_argument_names
 
 import os
 import xarray as xr
+import numpy as np
 from dataclasses import dataclass, asdict
 from typing import Self
 from itertools import product
 
 
-SCRATCH = "/work/scratch-nopw2/eeasm"
-dir_VCFS = os.path.join(SCRATCH, "vcfs_per_event")
+dir_VCFS = os.path.join(DIR_ROOT, "vcfs_per_event")
 
 
 @dataclass
@@ -84,15 +85,15 @@ class FpathsForAnalysis:
 
 def site_optimised_parametrisations() -> dict[str, SiteParametrisation]:
     opt_params = dict()
-    MI_full = get_MI_with_subsetting(K=K, R=R_slice)
+    MI_full = get_MI_with_subsetting()
     for site, site_arg in SITE_argument_names.items():
-        ds = MI_full.sel(site)
+        ds = MI_full.sel(site=site)
         ds = ds.isel(ds.MI.argmax(...))
-        opt_params[site] = SiteParametrisation(
+        opt_params[site_arg] = SiteParametrisation(
             site=site,
             params=Parametrisation(
                 R_km=float(ds.R_km),
-                tau_s=float(ds.tau_s),
+                tau_s=int(ds.tau_s),
             )
         )
     return opt_params
@@ -110,11 +111,51 @@ _PARAMETRISATION_literature = Parametrisation(
     tau_s = 10800
 )
 
-FPATHS_by_parametrisation = (
+# defined as a lambda function so that it is not necesarily ran upon importing
+FPATHS_by_parametrisation = lambda : (
     {
-        plabel, FpathsForAnalysis.from_parametrisation(parametrisation)
+        plabel: FpathsForAnalysis.from_parametrisation(parametrisation)
         for plabel, parametrisation in _PARAMETRISATIONS_extremal.items()
     }
     | dict(P_literature = FpathsForAnalysis.from_parametrisation(_PARAMETRISATION_literature))
     | dict(P_optimal = FpathsForAnalysis(**site_optimised_parametrisations()))
 )
+
+# also defined as a lambda function so is not called upon import
+vcfs_per_parametrisation = lambda: {
+    plabel: fpaths.to_DataArray()
+    for plabel, fpaths in FPATHS_by_parametrisation().items()
+}
+
+
+
+def generate_masks(data: np.ndarray, lower_threshold: float = 0, upper_threshold: float = 1) -> [np.ndarray, np.ndarray, np.ndarray]:
+    mask_above_lower = data > lower_threshold
+    mask_below_upper = data < upper_threshold
+    m_lower = ~mask_above_lower
+    m_middle = mask_above_lower & mask_below_upper
+    m_upper = ~mask_below_upper
+    return m_lower, m_middle, m_upper
+
+
+
+def generate_confusion_matrix(vcfs: xr.Dataset) -> np.ndarray:
+    """Accepts VCF datasets and computes a confusion matrix between the ATL09 and Cloudnet VCF distributions for nc, pc and tc cases.
+    """
+    atl09_masks = generate_masks(
+        data=vcfs.vcf_atl09.data
+    )
+    cloudnet_masks = generate_masks(
+        data=vcfs.vcf_cloudnet.data
+    )
+    
+    confusion_matrix = np.array([
+        [
+            (mask_cloudnet & mask_atl09).sum()
+            for mask_atl09 in atl09_masks
+        ]
+        for mask_cloudnet in cloudnet_masks
+    ])
+
+    return confusion_matrix
+

@@ -9,8 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
 
+from .common import get_figure_panel
 from .colormaps import CMAP_copula, NORM_copula
-from .MI_plots import FIGSIZE
 
 from typing import Self
 from dataclasses import dataclass
@@ -113,7 +113,7 @@ class BivariateCopula:
 
 
     def plot_density(self, cbar: bool=False) -> (plt.Figure, plt.Axes):
-        fig, ax = plt.subplots(1,1, figsize=FIGSIZE, layout="constrained")
+        fig, ax = get_figure_panel()
 
         density = self.density
         density.plot(

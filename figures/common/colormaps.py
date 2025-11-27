@@ -21,3 +21,9 @@ CMAP_copula = cm.vik
 
 NORM_probability = Normalize(vmin=0, vmax=1)
 NORM_copula = CenteredNorm(vcenter=1, halfrange=0.75)
+
+COLOR_ATL09 = cm.roma(0.65)
+COLOR_Cloudnet = cm.roma(0.2)
+
+MAPPABLE_copula = ScalarMappable(cmap=CMAP_copula, norm=NORM_copula)
+MAPPABLE_probability = ScalarMappable(cmap=CMAP_probability, norm=NORM_probability)
