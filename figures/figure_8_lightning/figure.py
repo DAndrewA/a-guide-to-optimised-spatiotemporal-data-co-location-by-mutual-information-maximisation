@@ -7,9 +7,10 @@ Script that creates the VCF mean bias profile plots.
 import sys
 sys.path.insert(1, "../")
 from common.colormaps import (
-    CMAP_probability, NORM_probability,
-    MAPPABLE_probability, LogNorm,
-    CMAP_plabels
+    CMAP_probability, 
+    NORM_bias,
+    MAPPABLE_bias,
+    CMAP_plabels,
 )
 from common.handle_vcfs import vcfs_per_parametrisation, PARAMETRISATION_print_names
 
@@ -21,10 +22,8 @@ from dataclasses import dataclass
 
 PANEL_SIZE = (4,5)
 
-
 BINS_bias = np.linspace(-1,1,50) 
 BINS_logratio = np.linspace(-3,3,60)
-NORM_bias = LogNorm(vmax=np.power(10,1.5), vmin=np.power(10,-2.5), clip=True)
 
 YBOUNDS = [0, 11_500] 
 YTICKS_packed = (
@@ -226,3 +225,11 @@ plt.savefig("expected_bias_distribution.svg", format="svg", transparent=True, bb
 
 fig, ax = plot_dvcf_variances(variances_by_p=vars_by_p)
 plt.savefig("bias_variance_distributions.svg", format="svg", transparent=True, bbox_inches="tight")
+
+# colorbar
+fig, cax = plt.subplots(1,1, figsize=PANEL_SIZE, layout="constrained")
+plt.colorbar(MAPPABLE_bias, cax=cax)
+cax.set_ylabel("per-height normalised probability density")
+cax.yaxis.set_ticks_position("right")
+cax.set_box_aspect(12)
+plt.savefig("colorbar.svg", format="svg", transparent=True, bbox_inches="tight")

@@ -113,10 +113,10 @@ _PARAMETRISATION_literature = Parametrisation(
 
 
 PARAMETRISATION_print_names = {
-    "P_00": r"$\vec{p}_{00}$",
-    "P_11": r"$\vec{p}_{11}$",
-    "P_literature": r"$\vec{p}_\text{lit.}$",
-    "P_optimal": r"$\hat{\vec{p}}$",
+    "P_00": r"$\boldsymbol{p}_{00}$",
+    "P_11": r"$\boldsymbol{p}_{11}$",
+    "P_literature": r"$\boldsymbol{p}_\text{lit.}$",
+    "P_optimal": r"$\hat{\boldsymbol{p}}$",
 }
 
 # defined as a lambda function so that it is not necesarily ran upon importing
