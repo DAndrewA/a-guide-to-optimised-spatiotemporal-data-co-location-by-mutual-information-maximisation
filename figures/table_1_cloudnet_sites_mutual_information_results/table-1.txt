@@ -1,17 +1,22 @@
 %t
 \begin{table*}[t]
 \caption{
-The locations of the Cloudnet sites used in the analysis, and important results of the mutual information calculation between the ATL09 and Cloudnet VCF profiles at each site.$\rho_\text{orbits}$ represents the normalised across-track density of ICESat-2 orbits at the latitude of the Cloudnet site.$\hat{\vec{p}} = (\hat{R}, \hat{\tau})$ represents the optimised parametrisation at which the maximum mutual information, $\hat{\text{I}}_\text{KSG}(\hat{\vec{p}})$, is found.$N_\text{events}(\vec{p})$ is the number of co-location events from which data is included with a parametrisation $\vec{p}$.$N_\text{profiles}(\vec{p})$ is the number of pairwise profile comparisons made between ATL09 and Cloudnet VCF profiles across all co-location events for a given parametrisation $\vec{p}$.
+
+The locations of the Cloudnet sites used in the analysis, and important results of the mutual information calculation between the ATL09 and Cloudnet VCF profiles at each site.
+$\rho_\text{orbits}$ represents the normalised across-track density of ICESat-2 orbits at the latitude of the Cloudnet site.
+$\hat{\vec{p}} = (\hat{R}, \hat{\tau})$ represents the optimised parametrisation at which the maximum mutual information, $\hat{\text{I}}_\text{KSG}(\hat{\vec{p}})$, is found.
+$N_\text{events}(\vec{p})$ is the number of co-location events from which data is included with a parametrisation $\vec{p}$.$N_\text{profiles}(\vec{p})$ is the number of pairwise profile comparisons made between ATL09 and Cloudnet VCF profiles across all co-location events for a given parametrisation $\vec{p}$.
+
 }
 \label{table::sites-MI}
 \begin{tabular}{lcccccccr}
 \tophline
-site & latitude (\unit{\degree N}) & longitude (\unit{\degree E}) & $\rho_{\text{orbits}}$ & $\hat{R}$ (\unit{km}) & $\hat{\tau}$ (\unit{s}) & $N_{\text{events}} (\hat{\vec{p}})$ & $N_{\text{profiles}} (\hat{\vec{p}})$ & $\hat{\text{I}}_\text{KSG} (\hat{\vec{p}})$ (\unit{bits}) \\
+site & latitude (\unit{\degree N}) & longitude (\unit{\degree E}) & $\rho_{\text{orbits}}$ & $\hat{R}$ (\unit{km}) & $\hat{\tau}$ (\unit{hours}) & $N_{\text{events}} (\hat{\vec{p}})$ & $N_{\text{profiles}} (\hat{\vec{p}})$ & $\hat{\text{I}}_\text{KSG} (\hat{\vec{p}})$ (\unit{bits}) \\
 \middlehline
-Ny-\r{A}lensund & $78.9$ & $11.9$ & $5.29$ & $60.0$ & $21600$ & $932$ & $ 6.06$e$+08$ & $0.607$ $\pm0.020$ \\
-Hyytiala & $61.8$ & $24.3$ & $2.12$ & $140.3$ & $18000$ & $881$ & $ 1.01$e$+09$ & $0.511$ $\pm0.016$ \\
-J\"ulich & $50.9$ & $6.4$ & $1.59$ & $196.9$ & $36000$ & $956$ & $ 3.27$e$+09$ & $0.533$ $\pm0.020$ \\
-Munich & $48.1$ & $11.6$ & $1.50$ & $140.3$ & $14400$ & $634$ & $ 6.60$e$+08$ & $0.484$ $\pm0.018$ \\
+Ny-\r{A}lensund & $78.9$ & $11.9$ & $5.29$ & $60.0$ & $6.0$ & $932$ & $ 6.06$e$+08$ & $0.607$ $\pm0.020$ \\
+Hyytiala & $61.8$ & $24.3$ & $2.12$ & $140.3$ & $5.0$ & $881$ & $ 1.01$e$+09$ & $0.511$ $\pm0.016$ \\
+J\"ulich & $50.9$ & $6.4$ & $1.59$ & $196.9$ & $10.0$ & $956$ & $ 3.27$e$+09$ & $0.533$ $\pm0.020$ \\
+Munich & $48.1$ & $11.6$ & $1.50$ & $140.3$ & $4.0$ & $634$ & $ 6.60$e$+08$ & $0.484$ $\pm0.018$ \\
 \bottomhline
 \end{tabular}
 \belowtable{} % table footnotes

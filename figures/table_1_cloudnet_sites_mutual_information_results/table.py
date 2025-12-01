@@ -7,9 +7,7 @@ Script to generate the text output for the latex table describing the Cloudnet s
 import sys
 sys.path.insert(1, "../")
 from common.rho_orbits import normalised_orbital_density_degrees
-from common.MI_plots import (
-    DIR_MI, K, R_slice
-)
+from common.handle_MI_datasets import get_MI_with_subsetting
 from common.handle_sites import (
     SITES,
     SITE_locations,
@@ -43,7 +41,7 @@ class TableRow:
             f"${self.longitude:.1f}$",
             f"${self.orbital_density:.2f}$",
             f"${self.R_hat:.1f}$",
-            f"${self.tau_hat}$",
+            f"${self.tau_hat/3600:.1f}$",
             f"${self.N_events}$",
             "$e$".join(f"${self.N_profiles: .2e}$".split("e")),
             f"${self.MI:.3f}$ $\\pm{self.MI_std:.3f}$"
@@ -63,10 +61,10 @@ class Table:
         r"longitude (\unit{\degree E})",
         r"$\rho_{\text{orbits}}$",
         r"$\hat{R}$ (\unit{km})",
-        r"$\hat{\tau}$ (\unit{s})",
+        r"$\hat{\tau}$ (\unit{hours})",
         r"$N_{\text{events}} (\hat{\vec{p}})$",
         r"$N_{\text{profiles}} (\hat{\vec{p}})$",
-        r"$\hat{\text{I}}_\text{KSG} (\hat{\vec{p}})$ (\unit{bits})",
+        r"$\hat{\text{I}}_\text{KSG} (\hat{\vec{p}})$ (\unit{nats})",
     )
 
     def __str__(self):
@@ -90,28 +88,17 @@ class Table:
         return "\n".join(lines)
 
 
-caption = "\n\t".join([
-    "The locations of the Cloudnet sites used in the analysis, and important results of the mutual information calculation between the ATL09 and Cloudnet VCF profiles at each site."
-    r"$\rho_\text{orbits}$ represents the normalised across-track density of ICESat-2 orbits at the latitude of the Cloudnet site."
-    r"$\hat{\vec{p}} = (\hat{R}, \hat{\tau})$ represents the optimised parametrisation at which the maximum mutual information, $\hat{\text{I}}_\text{KSG}(\hat{\vec{p}})$, is found."
-    r"$N_\text{events}(\vec{p})$ is the number of co-location events from which data is included with a parametrisation $\vec{p}$."
-    r"$N_\text{profiles}(\vec{p})$ is the number of pairwise profile comparisons made between ATL09 and Cloudnet VCF profiles across all co-location events for a given parametrisation $\vec{p}$."
-])
+caption = r"""
+The locations of the Cloudnet sites used in the analysis, and important results of the mutual information calculation between the ATL09 and Cloudnet VCF profiles at each site.
+$\rho_\text{orbits}$ represents the normalised across-track density of ICESat-2 orbits at the latitude of the Cloudnet site.
+$\hat{\vec{p}} = (\hat{R}, \hat{\tau})$ represents the optimised parametrisation at which the maximum mutual information, $\hat{\text{I}}_\text{KSG}(\hat{\vec{p}})$, is found.
+$N_\text{events}(\vec{p})$ is the number of co-location events from which data is included with a parametrisation $\vec{p}$.$N_\text{profiles}(\vec{p})$ is the number of pairwise profile comparisons made between ATL09 and Cloudnet VCF profiles across all co-location events for a given parametrisation $\vec{p}$.
+"""
 
 
 
 # load in the full dataset
-ds_full = xr.load_dataset(
-    os.path.join(
-        DIR_MI,
-        "MI_merged.nc"
-    )
-).drop_dims("height").sel(
-    dict(
-        R_km=R_slice,
-        K=K,
-    )
-)
+ds_full = get_MI_with_subsetting()
 
 table_rows = list()
 for site in SITES:
@@ -134,7 +121,7 @@ for site in SITES:
         )
     )
     
-    print(site, tr.R_hat * tr.orbital_density / tr.N_events)
+    print(f"{site:>10}, {(tr.R_hat * tr.orbital_density / tr.N_events):>6.3f}, {(tr.R_hat**2 * tr.orbital_density * tr.tau_hat / tr.N_profiles):>6.3f}")
 
 table = Table(rows=table_rows, label="table::sites-MI", caption=caption)
 
