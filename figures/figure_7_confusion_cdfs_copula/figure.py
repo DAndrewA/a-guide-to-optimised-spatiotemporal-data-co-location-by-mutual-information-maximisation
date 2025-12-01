@@ -16,7 +16,7 @@ from common.colormaps import (
 from common.handle_MI_datasets import (
     K
 )
-from common.handle_vcfs import vcfs_per_parametrisation, generate_confusion_matrix, generate_masks
+from common.handle_vcfs import vcfs_per_parametrisation, generate_confusion_matrix, generate_masks, PARAMETRISATION_print_names
 from common.copula import BivariateCopula, patheffects
 
 import numpy as np
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import ecdf
 
 
-def plot_confusion_matrix(confusion_matrix: np.ndarray) -> (plt.Figure, plt.Axes):
+def plot_confusion_matrix(confusion_matrix: np.ndarray, title: str = "") -> (plt.Figure, plt.Axes):
     fig, ax = get_figure_panel()
 
     normalised_confusion_matrix = confusion_matrix / np.sum(confusion_matrix)
@@ -54,6 +54,7 @@ def plot_confusion_matrix(confusion_matrix: np.ndarray) -> (plt.Figure, plt.Axes
     ax.set_yticks(*confusion_ticks, rotation=90, va="center")
     ax.set_xlabel("ATL09")
     ax.set_ylabel("Cloudnet")
+    ax.set_title(title)
     ax.set_box_aspect(1)
 
     return fig, ax
@@ -105,7 +106,8 @@ vcfs_per_p = vcfs_per_parametrisation()
 for plabel, vcfs in vcfs_per_p.items():
     print(plabel)
     fig, ax = plot_confusion_matrix(
-        confusion_matrix=generate_confusion_matrix(vcfs)
+        confusion_matrix=generate_confusion_matrix(vcfs),
+        title = PARAMETRISATION_print_names[plabel]
     )
     plt.savefig(f"{plabel}_k{K}_confusion_matrix.svg", format="svg", transparent=True, bbox_inches="tight")
     print("confusion matrix plot generated")

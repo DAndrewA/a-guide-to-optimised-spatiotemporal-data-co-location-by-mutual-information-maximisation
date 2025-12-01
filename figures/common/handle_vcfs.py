@@ -114,6 +114,8 @@ _PARAMETRISATION_literature = Parametrisation(
 
 PARAMETRISATION_print_names = {
     "P_00": r"$\boldsymbol{p}_{00}$",
+    "P_01": r"$\boldsymbol{p}_{01}$",
+    "P_10": r"$\boldsymbol{p}_{10}$",
     "P_11": r"$\boldsymbol{p}_{11}$",
     "P_literature": r"$\boldsymbol{p}_\text{lit.}$",
     "P_optimal": r"$\hat{\boldsymbol{p}}$",
