@@ -107,7 +107,7 @@ for plabel, vcfs in vcfs_per_p.items():
     fig, ax = plot_confusion_matrix(
         confusion_matrix=generate_confusion_matrix(vcfs)
     )
-    plt.savefig(f"{plabel}_k{K}_confusion_matrix.svg", format="svg", transparent=True)
+    plt.savefig(f"{plabel}_k{K}_confusion_matrix.svg", format="svg", transparent=True, bbox_inches="tight")
     print("confusion matrix plot generated")
 
     # generate the masks that define the (pc,pc) subset of interest 
@@ -121,14 +121,14 @@ for plabel, vcfs in vcfs_per_p.items():
     fig, ax = plot_ecdfs(
         data_atl09=data_atl09, data_cloudnet=data_cloudnet, mask_non_degen=mask_non_degenerate
     )
-    plt.savefig(f"{plabel}_k{K}_ecdf.svg", format="svg", transparent=True)
+    plt.savefig(f"{plabel}_k{K}_ecdf.svg", format="svg", transparent=True, bbox_inches="tight")
     print("ecdf plot generated")
 
     fig, ax = BivariateCopula.generate(
         data_X = data_atl09[mask_non_degenerate].flatten(),
         data_Y = data_cloudnet[mask_non_degenerate].flatten(),
     ).plot_density()
-    plt.savefig(f"{plabel}_k{K}_copula_density.svg", format="svg", transparent=True)
+    plt.savefig(f"{plabel}_k{K}_copula_density.svg", format="svg", transparent=True, bbox_inches="tight")
     print("copula density plot generated")
 
 # generate the colorbars for the copula density and probability
