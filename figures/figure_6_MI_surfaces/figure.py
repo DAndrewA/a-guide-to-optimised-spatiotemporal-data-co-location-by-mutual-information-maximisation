@@ -22,6 +22,9 @@ import numpy as np
 import os
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.legend_handler import HandlerLine2D
 
 from matplotlib.colors import Normalize
 
@@ -68,3 +71,31 @@ for site in SITES:
     plt.savefig(fname_out:=f"{site}_k{K}_mutual_information.svg", format="svg", transparent=True, bbox_inches="tight")
     plt.clf()
     print(f"success, saved to {fname_out}")
+
+
+
+# legend
+def legend_handles():
+    """Return legend handles for a vertical, horizontal dashed line, and hatching"""
+
+    def update_prop(handle, orig):
+        handle.update_from(orig)
+        x,y = handle.get_data()
+        handle.set_data([np.mean(x)]*2, [0, 2*y[0]])
+
+    handles = [
+        (vertical_line:=Line2D([0.5,0.5],[0,1], c="k", ls="--", lw=1, label=r"$\hat{R}$")),
+        Line2D([],[], c="k", ls="--", lw=1, label=r"$\hat{\tau}$"),
+        Patch(facecolor="none", hatch="xxx", label=r"possible $\hat{\boldsymbol{p}}$ candidate") 
+    ]
+    handler_map = {
+        vertical_line: HandlerLine2D(update_func=update_prop)
+    }
+    return handles, handler_map
+
+
+fig, ax = plt.subplots(1,1, figsize=FIGSIZE, layout="constrained")
+handles, handler_map = legend_handles()
+legend = plt.legend(handles=handles, handler_map=handler_map, loc="upper left", handlelength=1, handleheight=1)
+ax.axis("off")
+plt.savefig("legend.svg", format="svg", transparent=True, bbox_inches="tight")
