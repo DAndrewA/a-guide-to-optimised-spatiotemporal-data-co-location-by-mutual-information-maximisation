@@ -30,5 +30,5 @@ MAPPABLE_copula = ScalarMappable(cmap=CMAP_copula, norm=NORM_copula)
 MAPPABLE_probability = ScalarMappable(cmap=CMAP_probability, norm=NORM_probability)
 MAPPABLE_bias = ScalarMappable(cmap=CMAP_probability, norm=NORM_bias)
 
-#CMAP_plabels = cm.hawaii_r
-CMAP_plabels = cm.batlowS
+CMAP_plabels = cm.hawaii_r
+#CMAP_plabels = cm.batlowS
