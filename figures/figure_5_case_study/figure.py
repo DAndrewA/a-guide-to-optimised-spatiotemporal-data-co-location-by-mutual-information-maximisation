@@ -81,9 +81,13 @@ def plot_results(ds) -> (plt.Figure, list[plt.Axes]):
 
 
 print("Loading dataset: ", end="")
-ds = get_MI_with_subsetting(site=SITE)
+ds = get_MI_with_subsetting(site=SITE).load()
 print("success")
 print(ds)
+
+print(f"argmin: ", ds.isel(ds.MI.argmin(...)))
+print(f"argmax: ", ds.isel(ds.MI.argmax(...)))
+
 print("Computing pvalues")
 ds["pvalue_MImax"] = within_max_MI_pvalue(ds, "std")
 print("success")
