@@ -94,8 +94,8 @@ def legend_handles():
     return handles, handler_map
 
 
-fig, ax = plt.subplots(1,1, figsize=FIGSIZE, layout="constrained")
+fig, ax = plt.subplots(1,1, figsize=(4,0.5), layout="constrained")
 handles, handler_map = legend_handles()
-legend = plt.legend(handles=handles, handler_map=handler_map, loc="upper left", handlelength=1, handleheight=1)
+legend = plt.legend(handles=handles, handler_map=handler_map, loc="upper left", handlelength=1.5, handleheight=1.5, ncol=3)
 ax.axis("off")
 plt.savefig("legend.svg", format="svg", transparent=True, bbox_inches="tight")

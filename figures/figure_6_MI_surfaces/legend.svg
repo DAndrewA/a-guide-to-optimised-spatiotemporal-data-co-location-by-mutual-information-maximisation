@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="296.39952pt" height="224.39952pt" viewBox="0 0 296.39952 224.39952" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="296.39952pt" height="44.39952pt" viewBox="0 0 296.39952 44.39952" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2025-12-02T15:17:53.614529</dc:date>
+    <dc:date>2025-12-02T15:27:27.882335</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -21,37 +21,37 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 224.39952 
-L 296.39952 224.39952 
+   <path d="M 0 44.39952 
+L 296.39952 44.39952 
 L 296.39952 0 
 L 0 0 
-L 0 224.39952 
+L 0 44.39952 
 z
 " style="fill: none"/>
   </g>
   <g id="axes_1">
    <g id="legend_1">
     <g id="patch_2">
-     <path d="M 14.2 62.579688 
-L 140.3 62.579688 
-Q 142.3 62.579688 142.3 60.579688 
-L 142.3 14.2 
-Q 142.3 12.2 140.3 12.2 
+     <path d="M 14.2 32.4 
+L 244.4 32.4 
+Q 246.4 32.4 246.4 30.4 
+L 246.4 14.2 
+Q 246.4 12.2 244.4 12.2 
 L 14.2 12.2 
 Q 12.2 12.2 12.2 14.2 
-L 12.2 60.579688 
-Q 12.2 62.579688 14.2 62.579688 
+L 12.2 30.4 
+Q 12.2 32.4 14.2 32.4 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="line2d_1">
-     <path d="M 21.2 25.120313 
-L 21.2 17.220313 
+     <path d="M 23.7 25.6 
+L 23.7 16.2 
 " style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #000000"/>
     </g>
     <g id="text_1">
      <!-- $\hat{R}$ -->
-     <g transform="translate(34.2 25.120313) scale(0.1 -0.1)">
+     <g transform="translate(39.2 25.6) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-302" d="M -1831 5119 
 L -1369 5119 
@@ -100,14 +100,14 @@ z
      </g>
     </g>
     <g id="line2d_2">
-     <path d="M 16.2 36.15 
-L 21.2 36.15 
-L 26.2 36.15 
+     <path d="M 66.2 20.9 
+L 73.7 20.9 
+L 81.2 20.9 
 " style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #000000"/>
     </g>
     <g id="text_2">
      <!-- $\hat{\tau}$ -->
-     <g transform="translate(34.2 40.1) scale(0.1 -0.1)">
+     <g transform="translate(89.2 25.6) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-Oblique-3c4" d="M 2103 638 
 Q 2188 488 2525 488 
@@ -132,16 +132,16 @@ z
      </g>
     </g>
     <g id="patch_3">
-     <path d="M 16.2 57.529688 
-L 26.2 57.529688 
-L 26.2 48.579688 
-L 16.2 48.579688 
+     <path d="M 115.3 28.4 
+L 130.3 28.4 
+L 130.3 16.2 
+L 115.3 16.2 
 z
-" style="fill: url(#h970240ee08)"/>
+" style="fill: url(#h217e75b5ee)"/>
     </g>
     <g id="text_3">
      <!-- possible $\hat{\boldsymbol{p}}$ candidate -->
-     <g transform="translate(34.2 56.479688) scale(0.1 -0.1)">
+     <g transform="translate(138.3 25.6) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-70" d="M 1159 525 
 L 1159 -1331 
@@ -469,7 +469,7 @@ z
   </g>
  </g>
  <defs>
-  <pattern id="h970240ee08" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
+  <pattern id="h217e75b5ee" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
    <rect x="0" y="0" width="73" height="73" fill="none"/>
    <path d="M -36 36 
 L 36 -36 
