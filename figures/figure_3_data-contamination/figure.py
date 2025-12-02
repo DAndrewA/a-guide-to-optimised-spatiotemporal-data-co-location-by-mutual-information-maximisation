@@ -93,6 +93,6 @@ cax.set_yticks([])
 cax.yaxis.set_ticks_position("left")
 cax.set_box_aspect(12)
 
-plt.savefig("mutual_information_contamination.svg", format="svg", transparent=True)
+plt.savefig("mutual_information_contamination.svg", format="svg", transparent=True, bbox_inches="tight")
 
 
