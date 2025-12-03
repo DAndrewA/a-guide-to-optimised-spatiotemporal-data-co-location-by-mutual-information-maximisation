@@ -319,6 +319,7 @@ def plot_atl09_feature_mask_data(collocated_data):
         ls="--", c="k"
     )
     ax.set_title(None)
+    ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
     ax.set_title("ATL09")
     return fig, ax
@@ -394,6 +395,7 @@ def plot_atl09_collocation_criteria_data(collocated_data):
         ls="--", c="k"
     )
     ax.set_title(None)
+    ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
     return fig, ax
 
@@ -461,6 +463,7 @@ def plot_cloudnet_feature_mask_data(collocated_data):
         max_time, 
         ls="--", c="k"
     )
+    ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_xlabel("Time UTC", ha="right")
 
     ax.set_xticks(
@@ -545,6 +548,7 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     #    ax.get_xticklabels(),
     #    rotation=20
     #)
+    ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_title(None)
     
     return fig, ax
