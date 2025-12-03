@@ -233,14 +233,14 @@ def plot_spatial_subset_atl09(collocated_data):
 
     return fig, ax
 
-def plot_atl09_data(collocated_data):
+def plot_atl09_feature_mask_data(collocated_data):
     atl09_subsetter = inner_parameters[RawATL09]
     _profile = 1
 
     outer_atl09 = collocated_data[RawATL09]
     inner_atl09 = atl09_subsetter.subset(outer_atl09)
 
-    fig, axs = plt.subplots(2,1, sharex=True, figsize=(FIG_height,FIG_height), layout="constrained")
+    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
 
     limit_km = R_outer_km
     limit_subset_km = R_inner_km
@@ -258,14 +258,14 @@ def plot_atl09_data(collocated_data):
         cloud_and_attenuation_mask
             .plot(
                 x="time", y="height",
-                ax = axs[0],
+                ax = ax,
                 cmap=CMAP_cloudmask,
                 norm=NORM_cloudmask,
                 add_colorbar = False,
             )
     )
     # overplot hatched rectangles showing data removed after subsetting
-    axs[0].add_patch(
+    ax.add_patch(
         Rectangle(
             (BOUND_lower, 0),
             (min_time - BOUND_lower),
@@ -275,7 +275,7 @@ def plot_atl09_data(collocated_data):
             ls=""
         )
     )
-    axs[0].add_patch(
+    ax.add_patch(
         Rectangle(
             (max_time, 0),
             (BOUND_upper - max_time),
@@ -285,13 +285,43 @@ def plot_atl09_data(collocated_data):
             ls=""
         )
     )
-    axs[0].set_ylim(YLIM)
-    axs[0].set_yticks(
+    ax.set_ylim(YLIM)
+    ax.set_yticks(
         [0, 2000, 4000, 6000, 8000, 10_000],
         ["0", "2", "4", "6", "8", "10"]
     )
-    axs[0].set_ylabel("$z$ (km)")
+    ax.set_ylabel("$z$ (km)")
 
+    ax.axvline(
+        min_time,
+        ls="--", c="k"
+    )
+    ax.axvline(
+        max_time,
+        ls="--", c="k"
+    )
+    ax.set_title(None)
+    ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
+    ax.set_title("ATL09")
+    return fig, ax
+
+def plot_atl09_collocation_criteria_data(collocated_data):
+    atl09_subsetter = inner_parameters[RawATL09]
+    _profile = 1
+
+    outer_atl09 = collocated_data[RawATL09]
+    inner_atl09 = atl09_subsetter.subset(outer_atl09)
+
+    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+
+    limit_km = R_outer_km
+    limit_subset_km = R_inner_km
+
+    min_time = inner_atl09.data.time.sel(profile=_profile).min().data
+    max_time = inner_atl09.data.time.sel(profile=_profile).max().data
+
+    BOUND_lower = outer_atl09.data.time.sel(profile=_profile).min().data
+    BOUND_upper = outer_atl09.data.time.sel(profile=_profile).max().data
 
     d2s = outer_parameters[RawATL09].get_distance_to_location(outer_atl09).unstack()
     (
@@ -299,15 +329,15 @@ def plot_atl09_data(collocated_data):
             .sel(profile=_profile)
             .plot(
                 x="time",
-                ax = axs[1],
+                ax = ax,
                 **asdict(pa_atl09),
                 markevery=(25,75), # a marker every n/25=3 seconds, displaced by 1 second
                 markersize=8
             )
     )
-    axs[1].set_ylim([0,None])
-    rect_height = (lambda a: a[1] - a[0])( axs[1].get_ylim() )
-    axs[1].add_patch(
+    ax.set_ylim([0,None])
+    rect_height = (lambda a: a[1] - a[0])( ax.get_ylim() )
+    ax.add_patch(
         Rectangle(
             (BOUND_lower, 0),
             (min_time - BOUND_lower),
@@ -317,7 +347,7 @@ def plot_atl09_data(collocated_data):
             ls=""
         )
     )
-    axs[1].add_patch(
+    ax.add_patch(
         Rectangle(
             (max_time, 0),
             (BOUND_upper - max_time),
@@ -327,36 +357,34 @@ def plot_atl09_data(collocated_data):
             ls=""
         )
     )
-    axs[1].set_ylabel(r"$r\,(t)$ (km)")
+    ax.set_ylabel(r"$r\,(t)$ (km)")
 
-    axs[1].axhline(R_inner_km, ls="--", c="k")
-    axs[1].set_yticks(
+    ax.axhline(R_inner_km, ls="--", c="k")
+    ax.set_yticks(
         list(np.arange(0,250,50)) + [R_inner_km],
         [str(v) for v in np.arange(0,250,50)] + [r"$R$"]
     )
 
     # plot vertical lines for the spatial subsetting by co-location criteria
-    for ax in axs:
-        ax.axvline(
-            min_time,
-            ls="--", c="k"
-        )
-        ax.axvline(
-            max_time,
-            ls="--", c="k"
-        )
-        ax.set_title(None)
-        ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
-    axs[0].set_title("ATL09")
-    return fig, axs
+    ax.axvline(
+        min_time,
+        ls="--", c="k"
+    )
+    ax.axvline(
+        max_time,
+        ls="--", c="k"
+    )
+    ax.set_title(None)
+    ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
+    return fig, ax
 
-def plot_cloudnet_data(collocated_data):
+def plot_cloudnet_feature_mask_data(collocated_data):
     cloudnet_subsetter = inner_parameters[RawCloudnet]
     
     outer_cloudnet = collocated_data[RawCloudnet]
     inner_cloudnet = cloudnet_subsetter.subset(outer_cloudnet)
     
-    fig, axs = plt.subplots(2,1, sharex=True, figsize=(FIG_height,FIG_height), layout="constrained")
+    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
     
     limit_km = tau_outer
     limit_subset_km = tau_inner
@@ -372,13 +400,13 @@ def plot_cloudnet_data(collocated_data):
         outer_cloudnet.data.qc_cloudmask
             .plot(
                 x="time", y="height",
-                ax = axs[0],
+                ax = ax,
                 cmap=CMAP_cloudmask,
                 norm=NORM_cloudmask,
                 add_colorbar = False,
             )
     )
-    axs[0].add_patch(
+    ax.add_patch(
         Rectangle(
             (BOUND_lower, 0),
             (min_time - BOUND_lower),
@@ -388,7 +416,7 @@ def plot_cloudnet_data(collocated_data):
             ls=""
         )
     )
-    axs[0].add_patch(
+    ax.add_patch(
         Rectangle(
             (max_time, 0),
             (BOUND_upper - max_time),
@@ -398,12 +426,46 @@ def plot_cloudnet_data(collocated_data):
             ls=""
         )
     )
-    axs[0].set_ylim(YLIM)
-    axs[0].set_yticks(
+    ax.set_ylim(YLIM)
+    ax.set_yticks(
         [0, 2000, 4000, 6000, 8000, 10_000],
         ["0", "2", "4", "6", "8", "10"]
     )
-    axs[0].set_ylabel("$z$ (km)")
+    ax.set_ylabel("$z$ (km)")
+    
+    ax.axvline(
+        min_time, 
+        ls="--", c="k"
+    )
+    ax.axvline(
+        max_time, 
+        ls="--", c="k"
+    )
+    ax.set_xlabel("Time UTC", ha="right")
+
+    ax.set_xticks(
+        ax.get_xticks(),
+    )
+    ax.set_title("Cloudnet")
+    
+    return fig, ax
+
+def plot_cloudnet_collocation_criteria_data(collocated_data):
+    cloudnet_subsetter = inner_parameters[RawCloudnet]
+    
+    outer_cloudnet = collocated_data[RawCloudnet]
+    inner_cloudnet = cloudnet_subsetter.subset(outer_cloudnet)
+    
+    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+
+    limit_km = tau_outer
+    limit_subset_km = tau_inner
+    
+    min_time = inner_cloudnet.data.time.min().data
+    max_time = inner_cloudnet.data.time.max().data
+    
+    BOUND_lower = outer_cloudnet.data.time.min().data
+    BOUND_upper = outer_cloudnet.data.time.max().data
     
     dtau_s = np.abs( outer_cloudnet.data.time - np.datetime64(event[RawCloudnet].closest_approach_time) ) / 1e9
     
@@ -411,15 +473,15 @@ def plot_cloudnet_data(collocated_data):
         dtau_s
             .plot(
                 x="time",
-                ax = axs[1],
+                ax = ax,
                 **asdict(pa_cloudnet),
                 markevery = (int(dtau_s.count())%180//2,180),
                 markersize=8,
             )
     )
-    axs[1].set_ylim([0,None])
-    rect_height = (lambda a: a[1] - a[0])( axs[1].get_ylim() )
-    axs[1].add_patch(
+    ax.set_ylim([0,None])
+    rect_height = (lambda a: a[1] - a[0])( ax.get_ylim() )
+    ax.add_patch(
         Rectangle(
             (BOUND_lower, 0),
             (min_time - BOUND_lower),
@@ -429,7 +491,7 @@ def plot_cloudnet_data(collocated_data):
             ls=""
         )
     )
-    axs[1].add_patch(
+    ax.add_patch(
         Rectangle(
             (max_time, 0),
             (BOUND_upper - max_time),
@@ -439,36 +501,32 @@ def plot_cloudnet_data(collocated_data):
             ls=""
         )
     )
-    axs[1].axhline(tau_inner.total_seconds()/2, ls="--", c="k")
-    axs[1].set_ylabel(r"$\left| t - t_{0} \right|$ (hours)")
-    axs[1].set_yticks(
+    ax.axhline(tau_inner.total_seconds()/2, ls="--", c="k")
+    ax.set_ylabel(r"$\left| t - t_{0} \right|$ (hours)")
+    ax.set_yticks(
         list(np.arange(0,9,2) * 3600) + [tau_inner.total_seconds()/2],
         [str(v) for v in np.arange(0,9,2)] + [r"$\frac{\tau}{2}$"]
     )
     
     # plot vertical lines for the spatial subsetting by co-location criteria
-    for ax in axs:
-        ax.axvline(
-            min_time, 
-            ls="--", c="k"
-        )
-        ax.axvline(
-            max_time, 
-            ls="--", c="k"
-        )
-        ax.set_xlabel("Time UTC", ha="right")
-
-    axs[0].set_xticks(
-        axs[0].get_xticks(),
+    ax.axvline(
+        min_time, 
+        ls="--", c="k"
     )
-    axs[1].set_xticks(
-        axs[1].get_xticks(),
-        axs[1].get_xticklabels(),
+    ax.axvline(
+        max_time, 
+        ls="--", c="k"
+    )
+    ax.set_xlabel("Time UTC", ha="right")
+
+    ax.set_xticks(
+        ax.get_xticks(),
+        ax.get_xticklabels(),
         rotation=20
     )
-    axs[0].set_title("Cloudnet")
+    ax.set_title(None)
     
-    return fig, axs
+    return fig, ax
 
 def plot_homogenised_data(collocated_data):
     homgenised_data = collocated_data.homogenise_to(vcf.VCF_240m)
@@ -508,16 +566,18 @@ def plot_homogenised_data(collocated_data):
 print(f"loading data")
 collocated_data = event.load_with_joint_parameters(outer_parameters)
 print("data loaded succesfully")
+# svg-able
 for plot_func, savename in zip(
-    (plot_spatial_subset_atl09, plot_homogenised_data),
-    ("spatial_subset", "VCF")
+    (plot_spatial_subset_atl09, plot_atl09_collocation_criteria_data, plot_cloudnet_collocation_criteria_data, plot_homogenised_data),
+    ("spatial_subset", "atl09_criteria", "cloudnet_criteria", "VCF",)
 ):
     f,a = plot_func(collocated_data)
     f.savefig(f"{savename}.svg", format="svg", transparent=True)
 
+# png
 for plot_func, savename in zip(
-    (plot_atl09_data, plot_cloudnet_data),
-    ("atl09", "cloudnet")
+    (plot_atl09_feature_mask_data, plot_cloudnet_feature_mask_data),
+    ("atl09_feature", "cloudnet_feature",)
 ):
     f,a = plot_func(collocated_data)
     f.savefig(f"{savename}.png", dpi=600, transparent=True)
