@@ -239,8 +239,8 @@ def get_fixed_size_figure_axis() -> (plt.Figure, plt.Axes):
     fig = plt.figure(figsize=(FIG_height, FIG_height/2))
 
     # size in inches, [padding, axis, padding]
-    h = [Size.Fixed(0.3), Size.Fixed(FIG_height - 0.6)]
-    v = [Size.Fixed(0.1), Size.Fixed(FIG_height/2 - 0.5), Size.Fixed(0.4)]
+    h = [Size.Fixed(0.4), Size.Fixed(FIG_height - 0.8), Size.Fixed(0.4)]
+    v = [Size.Fixed(0.5), Size.Fixed(FIG_height/2 - 1), Size.Fixed(0.5)]
     divider = Divider(fig, (0,0,1,1), h, v, aspect=False)
 
     ax = fig.add_axes(
@@ -588,17 +588,19 @@ print(f"loading data")
 collocated_data = event.load_with_joint_parameters(outer_parameters)
 print("data loaded succesfully")
 # svg-able
-for plot_func, savename in zip(
-    (plot_spatial_subset_atl09, plot_atl09_collocation_criteria_data, plot_cloudnet_collocation_criteria_data, plot_homogenised_data),
-    ("spatial_subset", "atl09_criteria", "cloudnet_criteria", "VCF",)
+for plot_func, savename in (
+#    (plot_spatial_subset_atl09,"spatial_subset"), 
+    (plot_atl09_collocation_criteria_data, "atl09_criteria"), 
+    (plot_cloudnet_collocation_criteria_data, "cloudnet_criteria"), 
+#    (plot_homogenised_data, "VCF"),
 ):
     f,a = plot_func(collocated_data)
     f.savefig(f"{savename}.svg", format="svg", transparent=True)
 
 # png
-for plot_func, savename in zip(
-    (plot_atl09_feature_mask_data, plot_cloudnet_feature_mask_data),
-    ("atl09_feature", "cloudnet_feature",)
+for plot_func, savename in (
+    (plot_atl09_feature_mask_data, "atl09_feature"),
+    (plot_cloudnet_feature_mask_data, "cloudnet_feature"),
 ):
     f,a = plot_func(collocated_data)
     f.savefig(f"{savename}.png", dpi=600, transparent=True)
