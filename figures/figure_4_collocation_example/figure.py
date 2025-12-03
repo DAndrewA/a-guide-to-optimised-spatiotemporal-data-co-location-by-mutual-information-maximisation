@@ -158,6 +158,7 @@ def centered_square_with_inscribed_circle(square_halfedge: float, radius: float,
         path=path,
         facecolor = COLOR_spatial_block,
         alpha = alpha,
+        #hatch="x",
         ec=None,
     )
     return patch
@@ -593,10 +594,10 @@ collocated_data = event.load_with_joint_parameters(outer_parameters)
 print("data loaded succesfully")
 # svg-able
 for plot_func, savename in (
-#    (plot_spatial_subset_atl09,"spatial_subset"), 
+    (plot_spatial_subset_atl09,"spatial_subset"), 
     (plot_atl09_collocation_criteria_data, "atl09_criteria"), 
     (plot_cloudnet_collocation_criteria_data, "cloudnet_criteria"), 
-#    (plot_homogenised_data, "VCF"),
+    (plot_homogenised_data, "VCF"),
 ):
     f,a = plot_func(collocated_data)
     f.savefig(f"{savename}.svg", format="svg", transparent=True)
@@ -635,14 +636,14 @@ def plot_colorbar():
     )
     cax.yaxis.set_ticks_position('right')
     cax.set_box_aspect(aspect)
-    return fig, cax
 
-f,a = plot_colorbar()
-f.savefig(
-    "colorbar.svg",
-    format="svg",
-    transparent=True,
-    bbox_inches="tight"
-)
+    fig.savefig(
+        "colorbar.svg",
+        format="svg",
+        transparent=True,
+        bbox_inches="tight"
+    )
+
+plot_colorbar()
 
 
