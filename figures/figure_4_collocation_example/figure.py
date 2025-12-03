@@ -239,8 +239,8 @@ def get_fixed_size_figure_axis() -> (plt.Figure, plt.Axes):
     fig = plt.figure(figsize=(FIG_height, FIG_height/2))
 
     # size in inches, [padding, axis, padding]
-    h = [Size.Fixed(0.4), Size.Fixed(FIG_height - 0.8), Size.Fixed(0.4)]
-    v = [Size.Fixed(0.5), Size.Fixed(FIG_height/2 - 1), Size.Fixed(0.5)]
+    h = [Size.Fixed(0.55), Size.Fixed(FIG_height - 0.8), Size.Fixed(0.25)]
+    v = [Size.Fixed(0.5), Size.Fixed(FIG_height/2 - 0.8), Size.Fixed(0.3)]
     divider = Divider(fig, (0,0,1,1), h, v, aspect=False)
 
     ax = fig.add_axes(
