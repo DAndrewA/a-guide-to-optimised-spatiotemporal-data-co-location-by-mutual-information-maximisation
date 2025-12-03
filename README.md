@@ -1,23 +1,55 @@
 # Example: ATL09 and Cloudnet data
 
-The code in this repository will demonstrate how the framework can be used by applying it to a validation of ICESat-2 ATL09 data against Cloudnet data.
-The ATL09 data will be collocated with the Cloudnet data by taking vertical profiles that fall within a radius R of the Cloudnet site, and Cloudnet data within a window of duration tau, centered on the time of closest approach.
+The code in this repository will demonstrate the use of the satellite validation pipeline code, as well as the framework outlined in "A guide to optimised spatiotemporal data co-location by mutual information maximisation".
 
-In order to run the analysis, we implement:
-+ `RawATL09 (RawData)` to handle loading ATL09 data from (possibly multiple) `.h5` files.
-+ `RawCloudnet (RawData)` to handle loading Cloudnet data from (possibly multiple) `.nc` files.
-+ `RadiusDuration (CollocationParametrisation)` to handle passing collocation parameters to subset the raw data.
-+ `VCFProfile (HomogenisedData)` to create homogenised Vertical Cloud Fraction profiles from raw data.
-+ `CollocationCloudnetATL09 (CollocationEvent)` to handle all of the information required to load raw data for a collocation event.
-+ `SchemeCloudnetATL09RadiusDuration (CollocationScheme)` to handle generating `CollocationEvent`s using definitions for `RawData`.
+## Shell environment setup
+
+Because the framework deals with large data volumes, two different environment variables need to be set, to allow the scripts to locate raw data and save results to the appropriate locations.
+
++ The `$MI_MAXIMISATION_RAW_DATA_DIRECTORY` should point to the root directory where the raw ATL09 and Cloudnet data will be stored.
++ The `$MI_MAXIMISATION_RESULTS_DIRECTORY` should point to the root directpry where results and intermediate files will be stored.
+
+We recommend that these are set through exporting the variables in one of the runtime configuration `.*rc` scripts in your user's home directory.
+
+## Python environement setup
+
+This work was developed with a mamba (conda) environment, named `overpass_analysis_again`.
+This environment can be reproduced through the commands:
+
+```bash
+conda create --file requirements.yml [OPTIONS]
+conda activate overpass_analysis_again
+pip install -e ../
+```
+
+The pip installation command ensures that `sat_val_framework` is an editable install in the environment and can be imported.
 
 
 ## Running scripts
 
-In order to run the scripts, from this directory, one can run
+Within `atl09_cloudnet/scripts` are the following scripts:
 
+1. `get_collocation_events` produces pickled lists of co-location events describing what raw data needs loading for analysis.
+2. `consolidate_collocation_event_lists` merges the batch outputs from `get_collocation_events` for a given site, if batching was used.
+3. `compute_vcfs_per_event` produces a netcdf file with paired ATL09 and Cloudnet VCF profiles for all of the co-location events for which there is sufficient data given the provided co-location parametrisation.
+4. `consolidate_vcfs_per_event_batch` consolidates `vcf_per_event` output files if the batching option was selected.
+5. `compute_MI_with_confidence` computes datasets containing mutual information between the ATL09 and Cloudnet VCF profiles for a given co-location parametrisation.
+6. `merge_MI_with_confidence` merges the outputs from `compute_MI_with_confidence`, producing `MI_merged.nc` which forms the basis for the analysis.
+
+In order to run the scripts, ensure that the correct conda environment is loaded, and then run the scripts from this directory via the commands
 ```bash
-python -m atl09_cloudnet.scripts.<script-name> <options>
+python -m atl09_cloudnet.scripts.<script name> [OPTIONS]
 ```
+Each script should provide suitable help messages for the option flags.
 
-This ensures that all imports of the `definitions` from the scripts are valid.
+The results were computed on the JASMIN supercomputer ( https://www.jasmin.ac.uk ; DOI: 10.1109/BigData.2013.6691556 ) and as a result, SLURM submission generation scripts exist under `atl09_cloudnet/slurm`.
+Write the output of the `echo-submission-script` scripts to a file which can then be called.
+NOTE: the `--qos` and `--account` fields will need changing for the job submission to be permitted.
+
+## Analysing results
+
+Between the outputs produced by running the above scripts, and the raw data stored within the directory structure under `$MI_MAXIMISATION_RAW_DATA_DIRECTORY`, this should be sufficient for running the subsequent analysis to produce the analysis used in the paper.
+The scripts for running the analysis and producing the resulting figures are found within the `figures` directory.
+Each figure has its own script implementing the analysis, with common functionality shared within `figures/common`.
+Paper-like figures with your own results should be possible to produce by using the inkscape-generated `figures/**/f??.svg` files and rendering these to .pdf files.
+

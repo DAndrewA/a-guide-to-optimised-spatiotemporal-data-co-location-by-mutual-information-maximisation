@@ -1,0 +1,28 @@
+name: overpass_analysis_again
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - xarray
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - xhistogram
+  - h5py
+  - netcdf4
+  - cartopy
+  - cmcrameri
+  - earthaccess
+  - dask
+  - setuptools
+  - pip
+  - ipykernel
+  - ca-certificates
+  - certifi
+  - openssl
+  - h5netcdf
+  - geojson
+  - earthdata
+  - harmony-py
+prefix: /home/users/eeasm/mambaforge-pypy3/envs/overpass_analysis_again
