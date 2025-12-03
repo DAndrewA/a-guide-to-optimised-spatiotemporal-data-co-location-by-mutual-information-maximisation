@@ -34,6 +34,7 @@ import pickle
 from matplotlib.patches import Circle, Rectangle
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.cm import ScalarMappable
+from mpl_toolkits.axes_grid1 import Divider, Size
 
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
@@ -233,6 +234,22 @@ def plot_spatial_subset_atl09(collocated_data):
 
     return fig, ax
 
+
+def get_fixed_size_figure_axis() -> (plt.Figure, plt.Axes):
+    fig = plt.figure(figsize=(FIG_height, FIG_height/2))
+
+    # size in inches, [padding, axis, padding]
+    h = [Size.Fixed(0.3), Size.Fixed(FIG_height - 0.6)]
+    v = [Size.Fixed(0.1), Size.Fixed(FIG_height/2 - 0.5), Size.Fixed(0.4)]
+    divider = Divider(fig, (0,0,1,1), h, v, aspect=False)
+
+    ax = fig.add_axes(
+        divider.get_position(),
+        axes_locator=divider.new_locator(nx=1, ny=1)
+    )
+    return fig, ax
+
+
 def plot_atl09_feature_mask_data(collocated_data):
     atl09_subsetter = inner_parameters[RawATL09]
     _profile = 1
@@ -240,7 +257,8 @@ def plot_atl09_feature_mask_data(collocated_data):
     outer_atl09 = collocated_data[RawATL09]
     inner_atl09 = atl09_subsetter.subset(outer_atl09)
 
-    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    #fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    fig, ax = get_fixed_size_figure_axis()
 
     limit_km = R_outer_km
     limit_subset_km = R_inner_km
@@ -312,7 +330,8 @@ def plot_atl09_collocation_criteria_data(collocated_data):
     outer_atl09 = collocated_data[RawATL09]
     inner_atl09 = atl09_subsetter.subset(outer_atl09)
 
-    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    #fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    fig, ax = get_fixed_size_figure_axis()
 
     limit_km = R_outer_km
     limit_subset_km = R_inner_km
@@ -384,7 +403,8 @@ def plot_cloudnet_feature_mask_data(collocated_data):
     outer_cloudnet = collocated_data[RawCloudnet]
     inner_cloudnet = cloudnet_subsetter.subset(outer_cloudnet)
     
-    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    #fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    fig, ax = get_fixed_size_figure_axis()
     
     limit_km = tau_outer
     limit_subset_km = tau_inner
@@ -456,7 +476,8 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     outer_cloudnet = collocated_data[RawCloudnet]
     inner_cloudnet = cloudnet_subsetter.subset(outer_cloudnet)
     
-    fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    #fig, ax = plt.subplots(1,1, sharex=True, figsize=(FIG_height,FIG_height/2), layout="constrained")
+    fig, ax = get_fixed_size_figure_axis()
 
     limit_km = tau_outer
     limit_subset_km = tau_inner
@@ -519,11 +540,11 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     )
     ax.set_xlabel("Time UTC", ha="right")
 
-    ax.set_xticks(
-        ax.get_xticks(),
-        ax.get_xticklabels(),
-        rotation=20
-    )
+    #ax.set_xticks(
+    #    ax.get_xticks(),
+    #    ax.get_xticklabels(),
+    #    rotation=20
+    #)
     ax.set_title(None)
     
     return fig, ax
