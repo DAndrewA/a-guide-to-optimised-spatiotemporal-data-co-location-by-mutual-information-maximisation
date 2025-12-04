@@ -13,7 +13,6 @@ from common.colormaps import CMAP_probability, MAPPABLE_probability
 from common.synthetic_data import gen_xy_samples_mixture
 from common.handle_MI_datasets import K
 
-sys.path.insert(1, "../../")
 from atl09_cloudnet.holmes_et_al_2019.python_interface import MIEstimate
 
 a,b,c = 1, 0.3, 0.05

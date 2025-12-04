@@ -6,7 +6,6 @@ Script to produce 3 figures for the mutual information bounds appendix
 
 import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
-sys.path.insert(1, "../../")
 from atl09_cloudnet.holmes_et_al_2019.python_interface import MIEstimate
 
 import scipy

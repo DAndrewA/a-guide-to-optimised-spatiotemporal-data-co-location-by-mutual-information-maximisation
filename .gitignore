@@ -17,6 +17,8 @@ resubmit*
 # figures folder in examples by default (force additions to figures directory)
 figures
 
+# the downloaded repository for sat-val-framework dependency
+src/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

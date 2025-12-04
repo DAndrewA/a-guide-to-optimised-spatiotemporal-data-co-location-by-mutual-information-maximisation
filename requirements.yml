@@ -25,4 +25,7 @@ dependencies:
   - geojson
   - earthdata
   - harmony-py
+  - pip
+  - pip:
+    - -r pipinstall.txt
 prefix: /home/users/eeasm/mambaforge-pypy3/envs/overpass_analysis_again

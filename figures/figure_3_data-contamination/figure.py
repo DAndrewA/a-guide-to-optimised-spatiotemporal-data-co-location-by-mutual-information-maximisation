@@ -18,7 +18,6 @@ from common.synthetic_data import (
 )
 from common.handle_MI_datasets import K
 
-sys.path.insert(1, "../../")
 from atl09_cloudnet.holmes_et_al_2019.python_interface import MIEstimate
 
 

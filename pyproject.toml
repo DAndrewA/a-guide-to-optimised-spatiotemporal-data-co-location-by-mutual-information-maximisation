@@ -1,0 +1,12 @@
+[project]
+name="atl09_cloudnet"
+description = "Python package implementing the satellite validation framework found at (https://github.com/DAndrewA/sat-val-framework)"
+authors = [{name="Andrew Martin"}]
+readme="README.md"
+license = {file = "LICENSE"} # placeholder
+requires-python = ">=3.10" # placeholder
+dependencies = [] # placeholder
+dynamic=["version"]
+
+[tool.setuptools.packages]
+find = {}

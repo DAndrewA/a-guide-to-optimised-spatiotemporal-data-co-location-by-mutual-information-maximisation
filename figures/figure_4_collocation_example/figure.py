@@ -5,8 +5,6 @@ Script to create Figure 4 in my paper, showing the co-lcoation between ICESat-2 
 """
 
 import sys
-sys.path.insert(1,"../..")
-
 from atl09_cloudnet.definitions.collocation import (
     DistanceFromLocation, Duration, RadiusDuration,
     RawATL09, RawCloudnet, 

@@ -14,15 +14,26 @@ We recommend that these are set through exporting the variables in one of the ru
 ## Python environement setup
 
 This work was developed with a mamba (conda) environment, named `overpass_analysis_again`.
-This environment can be reproduced through the commands:
+The environment can be reproduced through the commands:
 
 ```bash
-conda create --file requirements.yml [OPTIONS]
+conda env create --file requirements.yml --name overpass_analysis_again
 conda activate overpass_analysis_again
-pip install -e ../
+pip install -e .
 ```
 
-The pip installation command ensures that `sat_val_framework` is an editable install in the environment and can be imported.
+This will install all of the dependencies from the conda-forge channel, as well as the `sat_val_framework` package from its git repo.
+The `atl09_cloudnet` package will then be editably installed into the repository as well. 
+
+### Compilation of C++ code
+
+The Holmes (/KSG) code is written in a `.C` file, and thus needs compiling into the shared object file `libMIxnyn.so`.
+In order to do this, a C compiler must be installed.
+If using the `gcc` compiler, from within `atl09_cloudnet/holmes_et_al_2019/` run the command:
+```bash
+gcc -shared -fPIC -Wl,--export-dynamic -o libMIxnyn.so MIxnyn.C
+```
+This command may vary depending on the locally installed compiler and linker.
 
 ## Directory structure
 
