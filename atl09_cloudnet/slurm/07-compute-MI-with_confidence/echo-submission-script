@@ -1,0 +1,10 @@
+scratch_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/MI_oe
+
+for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
+    job_name="compute_MI_confidence_${site}";
+    slurm_command="sbatch --partition=standard --qos=long --account=icecaps --time=72:00:00 --mem=30G --job-name=${job_name} -o ${scratch_dir}/${job_name}.o -e ${scratch_dir}/${job_name}.e job-compute-MI.sh ${site}";
+    echo "#${site}";
+    echo "${slurm_command}";
+    echo "";
+done
+

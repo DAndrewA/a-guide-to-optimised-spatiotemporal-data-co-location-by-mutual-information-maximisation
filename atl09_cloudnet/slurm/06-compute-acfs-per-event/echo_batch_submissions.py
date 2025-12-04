@@ -7,10 +7,10 @@ Script to handle creation of submission commands for batching compute_acfs_per_e
 import pickle
 import os
 
-SCRATCH = os.environ["SCRATCH"]
-PICKLE_DIR = os.path.join(SCRATCH, "get_collocation_events_pickles")
-OUTPUT_DIR = os.path.join(SCRATCH, "acfs_per_event")
-SCRATCH_DIR = os.path.join(SCRATCH, "acfs_per_event_oe")
+MI_MAXIMISATION_RESULTS_DIRECTORY = os.environ["MI_MAXIMISATION_RESULTS_DIRECTORY"]
+PICKLE_DIR = os.path.join(MI_MAXIMISATION_RESULTS_DIRECTORY, "get_collocation_events_pickles")
+OUTPUT_DIR = os.path.join(MI_MAXIMISATION_RESULTS_DIRECTORY, "acfs_per_event")
+MI_MAXIMISATION_RESULTS_DIRECTORY_DIR = os.path.join(MI_MAXIMISATION_RESULTS_DIRECTORY, "acfs_per_event_oe")
 
 
 SITES = ("ny-alesund", "hyytiala", "juelich", "munich")
@@ -33,8 +33,8 @@ for site, N_events in zip(SITES, LENGTHS):
         "--time=08:00:00",
         "--mem=20G",
         f"--job-name={job_name}",
-        f"-o {SCRATCH_DIR}/{job_name}_%a.o",
-        f"-e {SCRATCH_DIR}/{job_name}_%a.e",
+        f"-o {MI_MAXIMISATION_RESULTS_DIRECTORY_DIR}/{job_name}_%a.o",
+        f"-e {MI_MAXIMISATION_RESULTS_DIRECTORY_DIR}/{job_name}_%a.e",
         f"--array=0-{max_array_index}",
         f"job_compute_acfs_per_event.sh {site}",
         f"--batch --batch-size {BATCH_SIZE}"

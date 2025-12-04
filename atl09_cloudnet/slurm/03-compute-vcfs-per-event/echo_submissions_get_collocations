@@ -1,4 +1,4 @@
-scratch_dir=$SCRATCH/vcfs_per_event_oe
+scratch_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/vcfs_per_event_oe
 
 for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
     job_name="compute_vcfs_per_event_${site}";

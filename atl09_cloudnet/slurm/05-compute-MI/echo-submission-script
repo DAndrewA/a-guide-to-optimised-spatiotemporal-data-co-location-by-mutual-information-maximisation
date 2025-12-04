@@ -1,4 +1,4 @@
-scratch_dir=$SCRATCH/MI_oe
+scratch_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/MI_oe
 
 for K in 1 2 4 10 20; do
     for site in "ny-alesund" "hyytiala" "juelich" "munich"; do

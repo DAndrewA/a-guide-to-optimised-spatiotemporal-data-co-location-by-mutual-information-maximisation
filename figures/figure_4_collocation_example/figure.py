@@ -17,6 +17,7 @@ from atl09_cloudnet.definitions import vcf
 sys.path.insert(1,"../")
 from common.colormaps import COLOR_ATL09, COLOR_Cloudnet
 from common.handle_sites import SITES, SITE_locations, SITE_print_names, SITE_argument_names
+from common.common import DIR_ROOT_RAW_DATA
 
 
 from sat_val_framework import CollocationEventList
@@ -112,12 +113,18 @@ outer_parameters, inner_parameters
 #TODO: fix this so it is reproducible away from JASMIN
 event = CollocationCloudnetATL09(data={
     RawATL09: ATL09Event(
-        fpath = "/gws/ssde/j25b/icecaps/eeasm/paper1/sites/ny-alesund/atl09/ATL09_20210701034659_01151201_006_01_subsetted.h5",
+        fpath = os.path.join(
+            DIR_ROOT_RAW_DATA,
+            "sites/ny-alesund/atl09/ATL09_20210701034659_01151201_006_01_subsetted.h5",
+        )
         min_separation_km = 18.4
     ),
     RawCloudnet: CloudnetEvent(
         closest_approach_time = dt.datetime(2021,7,1,4,13,21,513461),
-        root_dir = "/gws/ssde/j25b/icecaps/eeasm/paper1/sites/ny-alesund/cloudnet",
+        root_dir = os.path.join(
+            DIR_ROOT_RAW_DATA,
+            "sites/ny-alesund/cloudnet",
+        )
         site="ny-alesund",
     ),
 })

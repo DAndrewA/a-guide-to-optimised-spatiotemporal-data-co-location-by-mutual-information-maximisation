@@ -1,7 +1,7 @@
 #!/bin/bash
 
 script_run_dir = ../../..
-pickle_dir=$SCRATCH/get_collocation_event_pickles
+pickle_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/get_collocation_event_pickles
 
 for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
     (cd $script_run_dir && time python -m atl09_cloudnet.scripts.consolidate_collocation_event_lists --site $site --pickle-dir $pickle_dir);

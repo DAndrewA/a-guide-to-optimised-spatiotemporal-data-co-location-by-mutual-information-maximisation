@@ -8,7 +8,11 @@ import os
 from matplotlib.pyplot import subplots
 
 DIR_ROOT = os.path.join(
-    os.environ["SCRATCH"]
+    os.environ["MI_MAXIMISATION_RESULTS_DIRECTORY"]
+)
+
+DIR_ROOT_RAW_DATA = os.path.join(
+    os.environ["MI_MAXIMISATION_RAW_DATA_DIRECTORY"]
 )
 
 # the size of inidividual panels in the results sections plots

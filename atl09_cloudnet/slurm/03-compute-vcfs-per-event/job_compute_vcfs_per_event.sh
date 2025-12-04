@@ -2,8 +2,8 @@
 script_name=atl09_cloudnet.scripts.compute_vcfs_per_event
 run_from_dir=../../..
 
-pickle_dir=$SCRATCH/get_collocation_events_pickles
-output_dir=$SCRATCH/vcfs_per_event
+pickle_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/get_collocation_events_pickles
+output_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/vcfs_per_event
 
 site=$1
 shift 1

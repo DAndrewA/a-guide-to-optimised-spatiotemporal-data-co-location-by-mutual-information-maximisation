@@ -1,4 +1,4 @@
-scratch_dir=$SCRATCH/get_collocation_events_oe
+scratch_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/get_collocation_events_oe
 
 for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
     job_name="get_collocation_events_${site}";

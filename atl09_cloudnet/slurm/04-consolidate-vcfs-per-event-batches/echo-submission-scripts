@@ -1,4 +1,4 @@
-scratch_dir=$SCRATCH/consolidate_vcfs_per_event_batches
+scratch_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/consolidate_vcfs_per_event_batches
 
 for site in "ny-alesund" "hyytiala" "juelich" "munich"; do
     job_name="consolidate_vcfs_per_event_batches_${site}"

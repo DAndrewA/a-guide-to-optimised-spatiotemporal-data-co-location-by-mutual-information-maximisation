@@ -2,8 +2,8 @@
 script_name=atl09_cloudnet.scripts.get_collocation_events
 run_from_dir=../../..
 
-sites_dir=$ICECAPS/eeasm/paper1/sites
-output_dir=$SCRATCH/get_collocation_events_pickles
+sites_dir=$MI_MAXIMISATION_RAW_DATA_DIRECTORY/sites
+output_dir=$MI_MAXIMISATION_RESULTS_DIRECTORY/get_collocation_events_pickles
 
 site=$1
 
