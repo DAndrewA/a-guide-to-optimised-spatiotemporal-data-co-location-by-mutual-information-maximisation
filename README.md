@@ -1,6 +1,8 @@
-# Example: ATL09 and Cloudnet data
+# A guide to optimised spatiotemporal data co-location by mutual information maximisation
 
-The code in this repository will demonstrate the use of the satellite validation pipeline code, as well as the framework outlined in "A guide to optimised spatiotemporal data co-location by mutual information maximisation".
+This repository holds the code to facilitate the analysis found within the paper of the same name.
+The analysis co-locates ICESat-2 ATL09 and Cloudnet data, and determines what optimised co-location parametrisation should be used when comparing vertical cloud fraction profiles between the two data sources.
+
 
 ## Shell environment setup
 
