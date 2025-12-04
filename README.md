@@ -66,6 +66,7 @@ Storage requirements for the Cloudnet data across all sites is `86.6G`.
 Pre-generated results files can be downloaded from (10.5281/zenodo.17817304).
 The repository contains two zip files, one associated with each of the environment variables named above.
 The files can be unzipped in the appropriate locations, and the analysis to produce the figures and table results should be runnable.
+Storage requirements for the uncompressed results files are `3.6G + 168M = 3.76G`
 
 ## Running scripts
 
@@ -94,4 +95,5 @@ Between the outputs produced by running the above scripts, and the raw data stor
 The scripts for running the analysis and producing the resulting figures are found within the `figures` directory.
 Each figure has its own script implementing the analysis, with common functionality shared within `figures/common`.
 Paper-like figures with your own results should be possible to produce by using the inkscape-generated `figures/**/f??.svg` files and rendering these to .pdf files.
+The analysis scripts should be ran within the directory they are found in.
 
