@@ -7,7 +7,7 @@ Script implementing the code from figure_4_5_MIs.ipynb, to generate panels for t
 import sys
 sys.path.insert(1, "../")
 from common.colormaps import CMAP_N_events, CMAP_N_profiles, CMAP_MI
-from common.handle_sites import SITES
+from common.handle_sites import SITES, SITE_print_names
 from common.handle_MI_datasets import get_MI_with_subsetting, K
 from common.MI_plots import (
     TEX_MI, TEX_R, TEX_tau,
@@ -67,7 +67,8 @@ for site in SITES:
     print("success")
 
     print("Generating plot")
-    fig, axs = plot_mutual_information_panel(ds)
+    fig, ax = plot_mutual_information_panel(ds)
+    ax.set_title(f"{SITE_print_names[site]}", usetex=True)
     plt.savefig(fname_out:=f"{site}_k{K}_mutual_information.svg", format="svg", transparent=True, bbox_inches="tight")
     plt.clf()
     print(f"success, saved to {fname_out}")
