@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17822188.svg)](https://doi.org/10.5281/zenodo.17822188)
+
 # A guide to optimised spatiotemporal data co-location by mutual information maximisation
 
 This repository holds the code to facilitate the analysis found within the paper of the same name.
