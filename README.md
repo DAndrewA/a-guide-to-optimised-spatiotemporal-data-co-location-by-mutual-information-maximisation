@@ -15,6 +15,20 @@ Because the framework deals with large data volumes, two different environment v
 
 We recommend that these are set through exporting the variables in one of the runtime configuration `.*rc` scripts in your user's home directory.
 
+## Python environment setup (new)
+
+This project is now migrating to using the `uv` package manager.
+In order to set up the python environment, install the `uv` package manager, and run the commands
+```bash
+uv sync
+uv pip install -e .
+```
+
+This should install all dependencies of the project, and install the `atl09_cloudnet` package itself.
+To run scripts, the command `uv run <script> [OPTIONS]` can then be ran.
+
+The C code for Holmes/KSG mutual information estimator will still need to be compiled (see below).
+
 ## Python environement setup
 
 This work was developed with a mamba (conda) environment, named `overpass_analysis_again`.

@@ -4,9 +4,32 @@ description = "Python package implementing the satellite validation framework fo
 authors = [{name="Andrew Martin"}]
 readme="README.md"
 license = {file = "LICENSE"} # placeholder
-requires-python = ">=3.10" # placeholder
-dependencies = [] # placeholder
+requires-python = ">=3.14" # placeholder
+dependencies = [
+  "numpy",
+  "xarray",
+  "pandas",
+  "matplotlib",
+  "scikit-learn",
+  "xhistogram",
+  "h5py",
+  "netcdf4",
+  "cartopy",
+  "cmcrameri",
+  "earthaccess",
+  "h5netcdf",
+  "geojson",
+  "earthdata",
+  "harmony-py",
+  "sat-val-framework",
+]
 dynamic=["version"]
+
+
+
 
 [tool.setuptools.packages]
 find = {}
+
+[tool.uv.sources]
+sat-val-framework = { git = "https://github.com/DAndrewA/sat-val-framework.git" }

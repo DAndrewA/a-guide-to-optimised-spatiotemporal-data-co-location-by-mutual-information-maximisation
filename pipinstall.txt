@@ -1,1 +1,0 @@
--e git+https://github.com/DAndrewA/sat-val-framework.git#egg=sat-val-framework
