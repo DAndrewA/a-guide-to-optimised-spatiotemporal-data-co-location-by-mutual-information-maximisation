@@ -32,6 +32,7 @@ from matplotlib.patches import Patch
 from matplotlib.legend_handler import HandlerLine2D
 
 from matplotlib.colors import LogNorm, Normalize
+plt.style.use("common.paper1")
 
 SITE = "juelich"
 
