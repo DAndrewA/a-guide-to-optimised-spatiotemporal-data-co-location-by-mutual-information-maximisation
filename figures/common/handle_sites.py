@@ -11,7 +11,8 @@ SITE_locations = {
 }
 
 SITE_print_names = {
-    "ny-alesund": r"Ny-\r{A}lensund",
+    #"ny-alesund": r"Ny-\r{A}lensund",
+    "ny-alesund": "Ny-Ålesund",
     "hyytiala": "Hyytiala",
     "juelich": "J\\\"ulich",
     "munich": "Munich",

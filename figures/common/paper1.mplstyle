@@ -1,5 +1,5 @@
 #text.usetex: True
-text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}
+text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}\usepackage{underscore}
 font.family: serif
 font.serif: CMU Serif
 savefig.bbox: tight

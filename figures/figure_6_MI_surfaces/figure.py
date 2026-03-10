@@ -27,6 +27,7 @@ from matplotlib.patches import Patch
 from matplotlib.legend_handler import HandlerLine2D
 
 from matplotlib.colors import Normalize
+plt.style.use("common.paper1")
 
 
 
@@ -68,7 +69,7 @@ for site in SITES:
 
     print("Generating plot")
     fig, ax = plot_mutual_information_panel(ds)
-    ax.set_title(f"{SITE_print_names[site]}", usetex=True)
+    ax.set_title(f"{SITE_print_names[site]}")
     plt.savefig(fname_out:=f"{site}_k{K}_mutual_information.svg", format="svg", transparent=True, bbox_inches="tight")
     plt.clf()
     print(f"success, saved to {fname_out}")
