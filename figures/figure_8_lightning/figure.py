@@ -19,6 +19,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from xhistogram.xarray import histogram as xhist
 from dataclasses import dataclass
+plt.style.use("common.paper1")
 
 PANEL_SIZE = (4,5)
 
@@ -139,8 +140,8 @@ def plot_distribution(plabel: str, dvcf: xr.DataArray, expected_bias: xr.DataArr
 
     ax.set_yticks(*YTICKS_packed)
     ax.set_ylim(YBOUNDS)
-    ax.set_xticks([-1,0,1])
     ax.set_xlim([-1,1])
+    ax.set_xticks([-1,0,1])
 
     ax.set_ylabel(r"$z$ (km)")
     ax.set_xlabel(r"$\nu$")
@@ -231,5 +232,6 @@ fig, cax = plt.subplots(1,1, figsize=PANEL_SIZE, layout="constrained")
 plt.colorbar(MAPPABLE_bias, cax=cax)
 cax.set_ylabel("per-height normalised probability density")
 cax.yaxis.set_ticks_position("right")
+cax.set_yticks([0.01,0.1,1,10],[r"$10^{-2}$",r"$10^{-1}$",r"$10$",r"$10^1$"])
 cax.set_box_aspect(12)
 plt.savefig("colorbar.svg", format="svg", transparent=True, bbox_inches="tight")

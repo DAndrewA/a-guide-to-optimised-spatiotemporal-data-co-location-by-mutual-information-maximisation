@@ -12,3 +12,5 @@ lines.markersize : 10
 xtick.labelsize : 16
 ytick.labelsize : 16
 legend.fontsize: 16
+
+axes.unicode_minus: False
