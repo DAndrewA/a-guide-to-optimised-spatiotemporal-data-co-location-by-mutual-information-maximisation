@@ -17,6 +17,7 @@ from common.synthetic_data import (
     F_b_of_x,
 )
 from common.handle_MI_datasets import K
+plt.style.use("common.paper1")
 
 from atl09_cloudnet.holmes_et_al_2019.python_interface import MIEstimate
 
@@ -74,7 +75,7 @@ for ax, r in zip(axs, R):
     ax.set_xlim([0,1])
     ax.set_ylim([0,1])
     ax.set_title(
-        r"$\hat{\text{I}}_\text{KSG}=" + f"{mi.MI:.3f}" + r"\pm" + f"{mi.std:.3f}" + r"$ nats",
+        r"$\hat{\text{I}}_\text{KSG}=" + f"{mi.MI:.3f}" + r"$" + "\n" + r" $\pm" + f"{mi.std:.3f}" + r"$ nats",
         y=-0.15,
         va="top",
         ha="center"
@@ -87,7 +88,7 @@ axs[0].set_ylabel("$y$")
 
 cax = axs[-1]
 plt.colorbar(MAPPABLE_probability, cax=cax, fraction=0.7)
-cax.set_ylabel("Normalised probability density")
+cax.set_ylabel("Normalised probability density", wrap=True)
 cax.set_yticks([])
 cax.yaxis.set_ticks_position("left")
 cax.set_box_aspect(12)

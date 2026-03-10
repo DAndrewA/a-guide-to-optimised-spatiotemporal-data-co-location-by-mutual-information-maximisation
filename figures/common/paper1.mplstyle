@@ -1,0 +1,12 @@
+#text.usetex: True
+text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}
+font.family: serif
+font.serif: CMU Serif
+savefig.bbox: tight
+
+axes.titlesize: 18
+axes.labelsize : 18
+lines.linewidth : 2
+lines.markersize : 10
+xtick.labelsize : 12
+ytick.labelsize : 12
