@@ -22,6 +22,7 @@ from common.copula import BivariateCopula, patheffects
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import ecdf
+plt.style.use("common.paper1")
 
 
 def plot_confusion_matrix(confusion_matrix: np.ndarray, title: str = "") -> (plt.Figure, plt.Axes):
@@ -87,8 +88,8 @@ def plot_ecdfs(data_atl09: np.ndarray, data_cloudnet: np.ndarray, mask_non_degen
 
     ax.set_xlim([0,1])
     ax.set_ylim([0,1])
-    ax.set_xlabel("$u$, $v$")
-    ax.set_ylabel("VCF")
+    ax.set_xlabel(r"$u$, $v$")
+    ax.set_ylabel(r"VCF")
     ax.set_box_aspect(1)
     ax.legend()
 

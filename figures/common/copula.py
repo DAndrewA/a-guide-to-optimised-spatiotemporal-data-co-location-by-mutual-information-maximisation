@@ -140,6 +140,8 @@ class BivariateCopula:
         contour_copula.set(path_effects = [
             patheffects.withTickedStroke(length=0.5, spacing=5, angle=90)
         ])
+        ax.set_xlabel(r"$u$")
+        ax.set_ylabel(r"$v$")
 
         ax.set_xlim([0,1])
         ax.set_ylim([0,1])
