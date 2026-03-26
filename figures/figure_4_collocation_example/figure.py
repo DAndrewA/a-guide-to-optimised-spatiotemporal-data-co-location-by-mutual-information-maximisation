@@ -177,7 +177,7 @@ def plot_spatial_subset_atl09(collocated_data):
     outer_atl09 = collocated_data[RawATL09]
     inner_atl09 = atl09_subsetter.subset(outer_atl09)
 
-    fig = plt.figure(figsize=(FIG_height,FIG_height), layout="constrained")
+    fig = plt.figure(figsize=(FIG_height/2,FIG_height/2), layout="constrained")
 
     limit_km = R_outer_km
     tick_spacing_km = 100
@@ -195,7 +195,7 @@ def plot_spatial_subset_atl09(collocated_data):
     ax.coastlines("10m")
     ax.add_feature(cfeature.LAND)
     ax.scatter(
-        atl09_subsetter.longitude, atl09_subsetter.latitude, transform=ccrs.PlateCarree(), marker = "*", fc="red", s=500, ec="k", lw=1.5, zorder=10
+        atl09_subsetter.longitude, atl09_subsetter.latitude, transform=ccrs.PlateCarree(), marker = "*", fc="red", s=200, ec="k", lw=1, zorder=10
     )
 
 
@@ -206,7 +206,7 @@ def plot_spatial_subset_atl09(collocated_data):
 
     for p, pdisp in zip(inner_atl09.data.profile, (1,2,3,)):
         d = inner_atl09.data.sel(profile=p)
-        ax.plot(d["longitude"], d["latitude"], transform=ccrs.PlateCarree(), label=None, lw = 3, c="green")
+        ax.plot(d["longitude"], d["latitude"], transform=ccrs.PlateCarree(), label=None, lw = 2, c="green")
 
 
 
@@ -583,7 +583,7 @@ def plot_homogenised_data(collocated_data):
         .isel(height=valid_height_slice)
         .plot(
             y="height", ax=ax,
-            label="+ attenuation",
+            label="\n".join(["+","attenuation"]),
             lw=3,
             c=COLOR_ATL09,
             ls="--"
