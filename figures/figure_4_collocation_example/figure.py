@@ -41,6 +41,8 @@ from itertools import product
 
 import cmcrameri.cm as cm
 
+plt.style.use("common.paper1")
+
 FIG_height = 6
 YLIM = [0,10_000]
 
@@ -55,13 +57,13 @@ pa_atl09 = PlotArgs(
     c = COLOR_ATL09,
     marker = "^",
     ls = "-",
-    lw = 2
+    lw = 3
 )
 pa_cloudnet = PlotArgs(
     c = COLOR_Cloudnet,
     marker="s",
     ls="-",
-    lw=2
+    lw=3
 )
 
 CMAP_cloudmask = ListedColormap(
@@ -114,7 +116,7 @@ event = CollocationCloudnetATL09(data={
         fpath = os.path.join(
             DIR_ROOT_RAW_DATA,
             "sites/ny-alesund/atl09/ATL09_20210701034659_01151201_006_01_subsetted.h5",
-        )
+        ),
         min_separation_km = 18.4
     ),
     RawCloudnet: CloudnetEvent(
@@ -122,10 +124,11 @@ event = CollocationCloudnetATL09(data={
         root_dir = os.path.join(
             DIR_ROOT_RAW_DATA,
             "sites/ny-alesund/cloudnet",
-        )
+        ),
         site="ny-alesund",
     ),
 })
+print(event)
 
 
 
@@ -559,25 +562,42 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     
     return fig, ax
 
+
+valid_height_slice = slice(1,None,None)
 def plot_homogenised_data(collocated_data):
-    homgenised_data = collocated_data.homogenise_to(vcf.VCF_240m)
+    homogenised_data = collocated_data.homogenise_to(vcf.VCF_240m)
+    atl09_attenuation_profile = collocated_data[RawATL09]._homogenise_to_VCF_attenuation(vcf.VCF_240m)
 
     fig, ax = plt.subplots(1,1, figsize=(FIG_height/2, FIG_height), layout="constrained")
 
-    homgenised_data[RawATL09].data.plot(
-        y="height", ax=ax,
-        **asdict(pa_atl09),
-        markevery=2,
-        markersize=8,
-        label="ATL09",
+    (homogenised_data[RawATL09].data
+        .isel(height=valid_height_slice)
+        .plot(
+            y="height", ax=ax,
+            **asdict(pa_atl09),
+            markevery=2,
+            markersize=8,
+            label="ATL09",
+    ))
+    ((homogenised_data[RawATL09].data + atl09_attenuation_profile.data)
+        .isel(height=valid_height_slice)
+        .plot(
+            y="height", ax=ax,
+            label="+ attenuation",
+            lw=3,
+            c=COLOR_ATL09,
+            ls="--"
+        )
     )
-    homgenised_data[RawCloudnet].data.plot(
-        y="height", ax=ax,
-        **asdict(pa_cloudnet),
-        label="Cloudnet",
-        markevery=(1,2),
-        markersize=8,
-    )
+    (homogenised_data[RawCloudnet].data
+        .isel(height=valid_height_slice)
+        .plot(
+            y="height", ax=ax,
+            **asdict(pa_cloudnet),
+            label="Cloudnet",
+            markevery=(1,2),
+            markersize=8,
+    ))
 
     ax.set_ylabel("$z$ (km)")
     ax.set_xlabel(r"$\text{VCF}$")

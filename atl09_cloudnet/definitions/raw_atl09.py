@@ -299,6 +299,18 @@ class RawATL09(RawData):
             metadata = self.metadata
         )
 
+    def _homogenise_to_VCF_attenuation(self, H: Type[vcf.VCF]) -> vcf.VCF:
+        vertical_attenuation_fraction = (
+            (self.data.feature_mask == 4)
+                .mean(dim=["time_index","profile"])
+                .interp_like(H.CG.lin_interp_z)
+                .rename("VCF")
+        )
+        return H(
+            data = vertical_attenuation_fraction,
+            metadata = self.metadata
+        )
+
     def homogenise_to(self, H: Type[HomogenisedData]) -> H:
         assert issubclass(H, HomogenisedData), f"{H} must be a subclass of {HomogenisedData}"
         if issubclass(H, vcf.VCF):
