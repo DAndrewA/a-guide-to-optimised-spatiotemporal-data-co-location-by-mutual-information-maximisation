@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from xhistogram.xarray import histogram as xhist
 from dataclasses import dataclass
 plt.style.use("common.paper1")
+import cmcrameri.cm as cm
 
 PANEL_SIZE = (4,5)
 
@@ -89,7 +90,10 @@ plot_args_by_p = {
         dvcfs_per_p.keys(),
         ("o", "s", "x", None), # markers
         ("-.", ":", "--", "-"), # linestyles
-        (CMAP_plabels(0), CMAP_plabels(df), CMAP_plabels(2*df), CMAP_plabels(3*df))  # colors
+        #colors
+        #(CMAP_plabels(0), CMAP_plabels(df), CMAP_plabels(2*df), CMAP_plabels(3*df))
+        #(CMAP_plabels(0), CMAP_plabels(df), cm.navia_r(0.1), cm.imola_r(0.1))
+        (cm.hawaii_r(0),cm.hawaii_r(0.1),cm.hawaii_r(0.2),cm.hawaii_r(0.3),)
     )
 }
 
@@ -154,7 +158,6 @@ def plot_distribution(plabel: str, dvcf: xr.DataArray, expected_bias: xr.DataArr
 
 def plot_expected_differences(means_by_p: dict[str, xr.DataArray]) -> (plt.Figure, plt.Axes):
     fig, ax = plt.subplots(1,1, figsize=PANEL_SIZE, layout="constrained")
-    ax.set_facecolor(CMAP_probability(0))
 
     ax.axvline(0, ls=(12,(10,7)), lw=1, c="w")
 
@@ -180,11 +183,13 @@ def plot_expected_differences(means_by_p: dict[str, xr.DataArray]) -> (plt.Figur
     ax.set_xlabel(r"$\mathbb{E}[\nu\,|\,z]$")
     ax.set_box_aspect(2.5)
 
+    ax.patch.set_facecolor(CMAP_probability(0))
+    fig.patch.set_alpha(0)
+
     return fig, ax
 
 def plot_dvcf_variances(variances_by_p: dict[str, xr.DataArray]) -> (plt.Figure, plt.Axes):
     fig, ax = plt.subplots(1,1, figsize=PANEL_SIZE, layout="constrained")
-    ax.set_facecolor(CMAP_probability(0))
 
     for i, (plabel, variance) in enumerate(variances_by_p.items()):
         plot_args = plot_args_by_p[plabel]
@@ -208,7 +213,10 @@ def plot_dvcf_variances(variances_by_p: dict[str, xr.DataArray]) -> (plt.Figure,
     ax.set_xlabel(r"$\text{Var}[\nu \, | \, z]$")
     ax.set_box_aspect(2.5)
 
-    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.patch.set_facecolor(CMAP_probability(0))
+    fig.patch.set_alpha(0)
+
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', labelcolor="linecolor", facecolor=CMAP_probability(0), framealpha=1)
     return fig, ax
 
 
@@ -222,10 +230,12 @@ for plabel, dvcf in dvcfs_per_p.items():
     plt.savefig(f"{plabel}_bias_distribution.svg", format="svg", transparent=True, bbox_inches="tight")
     
 fig, ax = plot_expected_differences(means_by_p=means_by_p)
-plt.savefig("expected_bias_distribution.svg", format="svg", transparent=True, bbox_inches="tight")
+#plt.savefig("expected_bias_distribution.svg", format="svg", transparent=True, bbox_inches="tight")
+plt.savefig("expected_bias_distribution.svg", format="svg", transparent=False, bbox_inches="tight")
 
 fig, ax = plot_dvcf_variances(variances_by_p=vars_by_p)
-plt.savefig("bias_variance_distributions.svg", format="svg", transparent=True, bbox_inches="tight")
+#plt.savefig("bias_variance_distributions.svg", format="svg", transparent=True, bbox_inches="tight")
+plt.savefig("bias_variance_distributions.svg", format="svg", transparent=False, bbox_inches="tight")
 
 # colorbar
 fig, cax = plt.subplots(1,1, figsize=PANEL_SIZE, layout="constrained")
