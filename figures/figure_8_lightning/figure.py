@@ -79,7 +79,7 @@ dvcfs_per_p = {
 
 
 #df = 0.15
-df = 0.2 # when CMAP_plabels=cm.batlowS
+df = 0.12 # when CMAP_plabels=cm.batlowS
 plot_args_by_p = {
     plabel: ParametrisationPlotArgs(
         marker = m,
