@@ -581,7 +581,7 @@ def plot_homogenised_data(collocated_data):
             y="height", ax=ax,
             label="+ attenuation",
             lw=3,
-            c=COLOR_ATL09,
+            c=CMAP_cloudmask(2),
             ls="--"
         )
     )
