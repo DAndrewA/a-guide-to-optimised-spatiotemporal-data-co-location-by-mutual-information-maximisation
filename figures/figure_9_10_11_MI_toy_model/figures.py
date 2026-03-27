@@ -5,13 +5,16 @@ Script to produce 3 figures for the mutual information bounds appendix
 """
 
 import sys
+sys.path.insert(1, "../")
 # caution: path[0] is reserved for script path (or '' in REPL)
 from atl09_cloudnet.holmes_et_al_2019.python_interface import MIEstimate
 
+from common import handle_sites
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
+plt.style.use("common.paper1")
 
 K=10
 

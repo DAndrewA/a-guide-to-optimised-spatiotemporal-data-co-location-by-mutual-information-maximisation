@@ -1,0 +1,23 @@
+for figure_dir in ./figure_2_mutual_information_schematic ./figure_3_data-contamination ./figure_5_case_study ./figure_6_MI_surfaces ./figure_7_confusion_cdfs_copula ./figure_8_lightning ./figure_12_orbital-density; do
+    (
+        echo "####### $figure_dir #######";
+        cd $figure_dir;
+        MI_MAXIMISATION_RESULTS_DIRECTORY=$MI_MAXIMISATION_RAW_DATA_DIRECTORY/scratch;
+        uv run figure.py;
+    );
+done
+
+(
+    figure_dir=./figure_9_10_11_MI_toy_model
+    echo "####### $figure_dir #######";
+    cd $figure_dir;
+    MI_MAXIMISATION_RESULTS_DIRECTORY=$MI_MAXIMISATION_RAW_DATA_DIRECTORY/scratch;
+    uv run figures.py;
+);
+
+(
+    echo "####### ./figure_4_collocation_example #######";
+    cd ./figure_4_collocation_example;
+    mamba activate overpass_analysis_again; 
+    python figure.py;
+)

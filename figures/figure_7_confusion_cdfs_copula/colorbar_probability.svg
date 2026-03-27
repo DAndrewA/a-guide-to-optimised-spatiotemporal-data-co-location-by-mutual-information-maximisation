@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="71.338072pt" height="224.39952pt" viewBox="0 0 71.338072 224.39952" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="68.737238pt" height="224.39952pt" viewBox="0 0 68.737238 224.39952" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-03-10T15:09:59.362965</dc:date>
+    <dc:date>2026-03-27T11:59:47.330284</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -22,8 +22,8 @@
  <g id="figure_1">
   <g id="patch_1">
    <path d="M 0 224.39952 
-L 71.338072 224.39952 
-L 71.338072 0 
+L 68.737238 224.39952 
+L 68.737238 0 
 L 0 0 
 L 0 224.39952 
 z
@@ -31,32 +31,32 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 7.2 208.54577 
-L 28.954947 208.54577 
-L 28.954947 12.75125 
-L 7.2 12.75125 
-L 7.2 208.54577 
+    <path d="M 7.2 209.627489 
+L 29.152238 209.627489 
+L 29.152238 12.057344 
+L 7.2 12.057344 
+L 7.2 209.627489 
 z
 " style="fill: none"/>
    </g>
    <image xlink:href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAAB4AAAEQCAYAAACnTcRmAAABgElEQVR4nO2d0Y3DMAzFbMe/XaNzdP+l7raggJBcQFAlPb0Ejru/n9/fGuBMBF1rrbv3Hgk8l/F5ZmJX4/cHvvvYmus8z0jgxgkjycRIuTBSLoyMAEbNhXGPrsY+I7Dqaoi0GuPuI+vqxglDaAR8AuLraqER0Jm9lIsiI4CRZGIIa5xkUtTVGCkXhtAI6F6+CJeEbpySTIwyxrhDTV2NOXzbabC5bD/1PTqzd5YuY1+NfXM8FLgaY9whr2c0AjMnbxsnEN84CbvaV+Mhrzfa1SkXg9AI+Hy1rrmEa9G3JHxz7MvYN8c6rc5lYvia6z6tRYgyxihjjKzP+wP37ISR2cPwCUj2FqMaY/jmeHKcbEvCaARm6LQxhnAt+pRr+wy97dBvzYVhPFEu/OxoJnA1xri7K5Qgug/k/YGNNycc3R3lOsn03Zzgq3FrkWJwjm3/J9E4YQgls7VIMVhjn70VPsLouto2xxkBDOOS2LaMhTXWZexTrmpMYTQCuUyIxgnjH3UaBoCOWUF2AAAAAElFTkSuQmCC" id="image8983d78d58" transform="scale(1 -1) translate(0 -195.84)" x="7.2" y="-12.24" width="21.6" height="195.84"/>
+iVBORw0KGgoAAAANSUhEUgAAAB4AAAESCAYAAADqhWVtAAABg0lEQVR4nO2d25EjMQzE9PrdNDaOzT+puyzAqgGQAEvDVrPHluX9+/P3bw1wJoqutdbbe48UnlvxuTO16zHG28fW43PvSOFU/f3CWSZGlomRZWKkagxfjwcNRCcuXxBYtu0kVLVwSJxUzSAci7oEIjQQ3XYyBgFd2Mu5KIRjMcukqMcYWSZGqsbwOVfiwhB++OIbEj5V6yxT2GPdiictc6Zw4sIwjkXfinVh7yzdim09zkAw3lTleozxhrLe4IpnTt6mahCfqttOGD5xvaGQOarqLJOheIvh63FjEUM4JHwG4luxbx/rhoQv7CUujHcbixCtGKMVYxR9vl+4dyeMUiaGz0CKtxj1+PuFhQZydV/VG4PADJ02xhCORZ1zTSYQ2aN+13bMWdhj3VF25c+OZgrX4+8XfrtLoyC6AQXDeGXD0V2OrnMu3ZUNiQujsYgxaCD9gwZEzoXRWMQwisuXq4XvTjpV6/ZxQYBCOBbXlj1qn7iyTIx6jCHssS7stZ0wfNvpP57xBoTVQHpGAAAAAElFTkSuQmCC" id="imaged70c0490cf" transform="scale(1 -1) translate(0 -197.28)" x="7.2" y="-11.52" width="21.6" height="197.28"/>
    <g id="matplotlib.axis_1"/>
    <g id="matplotlib.axis_2">
     <g id="ytick_1">
      <g id="line2d_1">
       <defs>
-       <path id="mcd0477f41b" d="M 0 0 
+       <path id="maead053980" d="M 0 0 
 L 3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#mcd0477f41b" x="28.954947" y="208.54577" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#maead053980" x="29.152238" y="209.627489" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
       <!-- 0 -->
-      <g transform="translate(35.954947 214.09702) scale(0.16 -0.16)">
+      <g transform="translate(36.152238 214.484833) scale(0.14 -0.14)">
        <defs>
         <path id="CMUSerif-Roman-30" d="M 250 2047 
 Q 250 2988 488 3500 
@@ -96,12 +96,12 @@ z
     <g id="ytick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#mcd0477f41b" x="28.954947" y="12.75125" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#maead053980" x="29.152238" y="12.057344" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
       <!-- 1 -->
-      <g transform="translate(35.954947 18.3025) scale(0.16 -0.16)">
+      <g transform="translate(36.152238 16.914688) scale(0.14 -0.14)">
        <defs>
         <path id="CMUSerif-Roman-31" d="M 569 3653 
 L 569 3853 
@@ -130,7 +130,7 @@ z
     </g>
     <g id="text_3">
      <!-- probability -->
-     <g transform="translate(60.445259 153.847104) rotate(-90) scale(0.18 -0.18)">
+     <g transform="translate(58.254738 149.241166) rotate(-90) scale(0.16 -0.16)">
       <defs>
        <path id="CMUSerif-Roman-70" d="M 178 -1044 
 Q 519 -1044 598 -1001 
@@ -430,13 +430,13 @@ z
    </g>
    <g id="LineCollection_1"/>
    <g id="patch_3">
-    <path d="M 7.2 208.54577 
-L 18.077473 208.54577 
-L 28.954947 208.54577 
-L 28.954947 12.75125 
-L 18.077473 12.75125 
-L 7.2 12.75125 
-L 7.2 208.54577 
+    <path d="M 7.2 209.627489 
+L 18.176119 209.627489 
+L 29.152238 209.627489 
+L 29.152238 12.057344 
+L 18.176119 12.057344 
+L 7.2 12.057344 
+L 7.2 209.627489 
 z
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>

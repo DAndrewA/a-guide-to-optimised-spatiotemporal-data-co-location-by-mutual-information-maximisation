@@ -177,7 +177,7 @@ def plot_spatial_subset_atl09(collocated_data):
     outer_atl09 = collocated_data[RawATL09]
     inner_atl09 = atl09_subsetter.subset(outer_atl09)
 
-    fig = plt.figure(figsize=(FIG_height/2,FIG_height/2), layout="constrained")
+    fig = plt.figure(figsize=(FIG_height,FIG_height), layout="constrained")
 
     limit_km = R_outer_km
     tick_spacing_km = 100
@@ -195,7 +195,7 @@ def plot_spatial_subset_atl09(collocated_data):
     ax.coastlines("10m")
     ax.add_feature(cfeature.LAND)
     ax.scatter(
-        atl09_subsetter.longitude, atl09_subsetter.latitude, transform=ccrs.PlateCarree(), marker = "*", fc="red", s=200, ec="k", lw=1, zorder=10
+        atl09_subsetter.longitude, atl09_subsetter.latitude, transform=ccrs.PlateCarree(), marker = "*", fc="red", s=500, ec="k", lw=1.5, zorder=10
     )
 
 
@@ -206,7 +206,7 @@ def plot_spatial_subset_atl09(collocated_data):
 
     for p, pdisp in zip(inner_atl09.data.profile, (1,2,3,)):
         d = inner_atl09.data.sel(profile=p)
-        ax.plot(d["longitude"], d["latitude"], transform=ccrs.PlateCarree(), label=None, lw = 2, c="green")
+        ax.plot(d["longitude"], d["latitude"], transform=ccrs.PlateCarree(), label=None, lw = 3, c="green")
 
 
 
@@ -217,11 +217,9 @@ def plot_spatial_subset_atl09(collocated_data):
 
     tick_km = [i*tick_spacing_km - tick_spacing_km*(limit_km//tick_spacing_km) for i in range(2*(limit_km//tick_spacing_km) + 1)]
     tick_m = [1000*v for v in tick_km]
-    ax.set_xticks(tick_m)
-    ax.set_xticklabels(tick_km)
+    ax.set_xticks(tick_m,tick_km)
     ax.set_xlabel("Easting (km)")
-    ax.set_yticks(tick_m)
-    ax.set_yticklabels(tick_km)
+    ax.set_yticks(tick_m,tick_km)
     ax.set_ylabel("Northing (km)")
 
 
@@ -571,7 +569,6 @@ def plot_homogenised_data(collocated_data):
     fig, ax = plt.subplots(1,1, figsize=(FIG_height/2, FIG_height), layout="constrained")
 
     (homogenised_data[RawATL09].data
-        .isel(height=valid_height_slice)
         .plot(
             y="height", ax=ax,
             **asdict(pa_atl09),
@@ -580,10 +577,9 @@ def plot_homogenised_data(collocated_data):
             label="ATL09",
     ))
     ((homogenised_data[RawATL09].data + atl09_attenuation_profile.data)
-        .isel(height=valid_height_slice)
         .plot(
             y="height", ax=ax,
-            label="\n".join(["+","attenuation"]),
+            label="+ attenuation",
             lw=3,
             c=COLOR_ATL09,
             ls="--"
@@ -595,7 +591,7 @@ def plot_homogenised_data(collocated_data):
             y="height", ax=ax,
             **asdict(pa_cloudnet),
             label="Cloudnet",
-            markevery=(1,2),
+            markevery=2,
             markersize=8,
     ))
 
