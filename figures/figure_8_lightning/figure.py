@@ -79,7 +79,7 @@ dvcfs_per_p = {
 
 
 #df = 0.15
-df = 0.15 # when CMAP_plabels=cm.batlowS
+df = 0.2 # when CMAP_plabels=cm.batlowS
 plot_args_by_p = {
     plabel: ParametrisationPlotArgs(
         marker = m,
@@ -91,9 +91,10 @@ plot_args_by_p = {
         ("o", "s", "x", None), # markers
         ("-.", ":", "--", "-"), # linestyles
         #colors
-        #(CMAP_plabels(0), CMAP_plabels(df), CMAP_plabels(2*df), CMAP_plabels(3*df))
+        (CMAP_plabels(0), CMAP_plabels(df), CMAP_plabels(2*df), cm.buda_r(0.2), CMAP_plabels(3*df)),
         #(CMAP_plabels(0), CMAP_plabels(df), cm.navia_r(0.1), cm.imola_r(0.1))
-        (cm.hawaii_r(0),cm.hawaii_r(0.1),cm.hawaii_r(0.2),cm.hawaii_r(0.3),)
+        #(cm.hawaii_r(0),cm.hawaii_r(0.1),cm.hawaii_r(0.2),cm.hawaii_r(0.3),)
+        #(cm.acton_r(0),cm.acton_r(0),cm.acton_r(0),cm.acton_r(0),)
     )
 }
 
@@ -217,6 +218,7 @@ def plot_dvcf_variances(variances_by_p: dict[str, xr.DataArray]) -> (plt.Figure,
     fig.patch.set_alpha(0)
 
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', labelcolor="linecolor", facecolor=CMAP_probability(0), framealpha=1)
+    #ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', framealpha=1)
     return fig, ax
 
 
