@@ -217,9 +217,11 @@ def plot_spatial_subset_atl09(collocated_data):
 
     tick_km = [i*tick_spacing_km - tick_spacing_km*(limit_km//tick_spacing_km) for i in range(2*(limit_km//tick_spacing_km) + 1)]
     tick_m = [1000*v for v in tick_km]
-    ax.set_xticks(tick_m,tick_km)
+    ax.set_xticks(tick_m)
+    ax.set_xticklabels(tick_km)
     ax.set_xlabel("Easting (km)")
-    ax.set_yticks(tick_m,tick_km)
+    ax.set_yticks(tick_m)
+    ax.set_yticklabels(tick_km)
     ax.set_ylabel("Northing (km)")
 
 
