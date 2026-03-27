@@ -14,7 +14,7 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
-plt.style.use("common.paper1")
+#plt.style.use("common.paper1")
 
 K=10
 
