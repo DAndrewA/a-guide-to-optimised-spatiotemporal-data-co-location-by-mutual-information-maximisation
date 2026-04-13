@@ -19,7 +19,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from xhistogram.xarray import histogram as xhist
 from dataclasses import dataclass
-plt.style.use("common.paper1")
+plt.style.use("common.figure8")
 import cmcrameri.cm as cm
 
 PANEL_SIZE = (4,5)

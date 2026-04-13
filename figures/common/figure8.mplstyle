@@ -1,0 +1,15 @@
+font.family: serif
+font.serif: CMU Serif
+savefig.bbox: tight
+savefig.transparent: True
+
+axes.titlesize: 20
+axes.labelsize : 20
+lines.linewidth : 2
+lines.markersize : 10
+xtick.labelsize : 18
+ytick.labelsize : 18
+legend.fontsize: 20
+
+axes.unicode_minus: False
+
