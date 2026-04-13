@@ -410,8 +410,8 @@ def plot_atl09_collocation_criteria_data(collocated_data):
 
     ax.axhline(R_inner_km, ls="--", c="k")
     ax.set_yticks(
-        list(np.arange(0,250,50)) + [R_inner_km],
-        [str(v) for v in np.arange(0,250,50)] + [r"$R$"]
+        list(np.arange(0,250,50)),
+        [str(v) for v in np.arange(0,250,50)]
     )
 
     # plot vertical lines for the spatial subsetting by co-location criteria
@@ -422,6 +422,12 @@ def plot_atl09_collocation_criteria_data(collocated_data):
     ax.axvline(
         max_time,
         ls="--", c="k"
+    )
+    ax.annotate(
+        r"$R$",
+        xy=(min_time+(max_time-min_time)/2, R_inner_km+5), xycoords='data',
+        horizontalalignment='center', verticalalignment='bottom',
+        fontsize=20
     )
     ax.set_title(None)
     ax.set_xlim([BOUND_lower, BOUND_upper])
@@ -558,8 +564,8 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     ax.axhline(tau_inner.total_seconds()/2, ls="--", c="k")
     ax.set_ylabel(r"$\left| t - t_{0} \right|$ (hours)")
     ax.set_yticks(
-        list(np.arange(0,9,2) * 3600) + [tau_inner.total_seconds()/2],
-        [str(v) for v in np.arange(0,9,2)] + [r"$\frac{\tau}{2}$"]
+        list(np.arange(0,9,2) * 3600),
+        [str(v) for v in np.arange(0,9,2)]
     )
     
     # plot vertical lines for the spatial subsetting by co-location criteria
@@ -572,6 +578,12 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
         ls="--", c="k"
     )
     ax.set_xlabel("Time UTC", ha="right")
+    ax.annotate(
+        r"$\frac{\tau}{2}$",
+        xy=(min_time+(max_time-min_time)/2, tau_inner.total_seconds()/2+1200), xycoords='data',
+        horizontalalignment='center', verticalalignment='bottom',
+        fontsize=20
+    )
 
     #ax.set_xticks(
     #    ax.get_xticks(),
