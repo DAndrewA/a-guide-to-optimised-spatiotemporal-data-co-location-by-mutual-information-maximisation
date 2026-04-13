@@ -7,6 +7,7 @@ Script to generate the Figure 12 demonstration of normalised across-track orbita
 import sys
 sys.path.insert(1,"../")
 from common.rho_orbits import (
+    _direct_normalised_density_from_degrees,
     normalised_orbital_density_degrees
 )
 
@@ -14,6 +15,7 @@ import cmcrameri.cm as cm
 import numpy as np
 
 import matplotlib.pyplot as plt
+plt.style.use("common.appendix")
 
 INCLINATIONS = {
     "ISS": 51.64,
@@ -43,9 +45,9 @@ for satellite, inclination in INCLINATIONS.items():
     #print(np.min(latitudes), np.max(latitudes), latitudes.shape)
     a.plot(
         latitudes[slice_all_but_final],
-        normalised_orbital_density_degrees(
-            latitude_1 = latitudes,
-            latitude_2 = max_lat,
+        _direct_normalised_density_from_degrees(
+            lat1 = latitudes,
+            lat2 = max_lat,
         )[slice_all_but_final],
         c=color,
         label=satellite,

@@ -6,6 +6,35 @@ Script containing the functionality to compute the local normalised across-track
 
 import numpy as np
 
+
+def alpha_12_radians(lat1: float, lat2: float) -> float:
+    """Compute the value of tan(alpha_12) from latitudes at location 1 and 2 (radians)"""
+    numerator = (
+        np.cos(lat1) 
+        * np.power(np.cos(lat2),2)
+        * np.sqrt( 
+            np.power( np.tan(lat2), 2 )
+            - np.power(np.tan(lat1), 2)
+        )
+    )
+    denominator = (
+        np.power(np.cos(lat1),2) * np.power(np.sin(lat2), 2)
+        - np.power(np.sin(lat1), 2) * np.power(np.cos(lat2), 2)
+    )
+    return np.arctan2(numerator, denominator)
+
+def _direct_normalised_density(lat1: float, lat2: float) -> float:
+    heading = alpha_12_radians(lat1, lat2)
+    normalised_density = np.sin(lat2) / np.cos(lat1) / np.cos(heading)
+    return normalised_density
+
+def _direct_normalised_density_from_degrees(lat1: float, lat2: float) -> float:
+    return _direct_normalised_density(
+        lat1 = np.deg2rad(lat1),
+        lat2 = np.deg2rad(lat2)
+    )
+
+
 def calculate_dlambda(latitude_1, latitude_2) -> float:
     """Given a maximum latitude, latitude_2, and an equatorwards latitude, latitude_1, calculcate the speeration of their longitudes along a great circle.
     NOTE: the point with lambda_1 in an orbit inclined at 92 degrees will be eastwards of the point at lambda_2, so dlambda is made negative to ensure proper sign.
