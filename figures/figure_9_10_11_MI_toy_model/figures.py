@@ -14,7 +14,7 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
-#plt.style.use("common.paper1")
+plt.style.use("common.appendix")
 
 K=10
 
@@ -166,7 +166,8 @@ def figure_2():
         for mixing_ratio in mixing_ratios
     ]
 
-    fig, ax = plt.subplots(1,1, figsize=FIGSIZE, layout="constrained")
+    #fig, ax = plt.subplots(1,1, figsize=FIGSIZE, layout="constrained")
+    fig, ax = plt.subplots(1,1, figsize=(6,4), layout="constrained")
 
     ax.plot(
         [0,1],[1,0], 
