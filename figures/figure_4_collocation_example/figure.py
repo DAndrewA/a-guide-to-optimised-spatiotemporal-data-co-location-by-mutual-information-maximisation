@@ -35,13 +35,23 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.cm import ScalarMappable
 from mpl_toolkits.axes_grid1 import Divider, Size
 
+from matplotlib.dates import (AutoDateLocator,)
+
+from matplotlib import rcParams
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 from itertools import product
 
 import cmcrameri.cm as cm
 
-plt.style.use("common.paper1")
+plt.style.use("common.figure4")
+print(rcParams["axes.titlesize"])
+
+# extract default sizes from style sheet for use with Geoaxes
+FONT_ticklabel_size = rcParams["xtick.labelsize"]
+FONT_label_size = rcParams["axes.labelsize"]
+FONT_title_size = rcParams["axes.titlesize"]
+
 
 FIG_height = 6
 YLIM = [0,10_000]
@@ -131,6 +141,10 @@ event = CollocationCloudnetATL09(data={
 print(event)
 
 
+def axis_datetime_formatter(ax):
+    ax.xaxis.set_major_locator(
+        AutoDateLocator(maxticks=6)
+    )
 
 def make_circle(r):
     t = np.arange(0, np.pi * 2.0, 0.01)
@@ -219,10 +233,15 @@ def plot_spatial_subset_atl09(collocated_data):
     tick_m = [1000*v for v in tick_km]
     ax.set_xticks(tick_m)
     ax.set_xticklabels(tick_km)
-    ax.set_xlabel("Easting (km)")
+    ax.set_xlabel("Easting (km)", fontsize=FONT_label_size)
     ax.set_yticks(tick_m)
     ax.set_yticklabels(tick_km)
-    ax.set_ylabel("Northing (km)")
+    ax.set_ylabel("Northing (km)", fontsize=FONT_label_size)
+    
+    for l in ax.xaxis.get_ticklabels():
+        l.set_fontsize(FONT_ticklabel_size)
+    for l in ax.yaxis.get_ticklabels():
+        l.set_fontsize(FONT_ticklabel_size)
 
 
     # circle showing the spatial subsetting of the ATL09 data from the RawATL09 data
@@ -331,6 +350,7 @@ def plot_atl09_feature_mask_data(collocated_data):
     ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
     ax.set_title("ATL09")
+    axis_datetime_formatter(ax)
     return fig, ax
 
 def plot_atl09_collocation_criteria_data(collocated_data):
@@ -406,6 +426,7 @@ def plot_atl09_collocation_criteria_data(collocated_data):
     ax.set_title(None)
     ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_xlabel("Elapsed GPS seconds, $t$", ha="right")
+    axis_datetime_formatter(ax)
     return fig, ax
 
 def plot_cloudnet_feature_mask_data(collocated_data):
@@ -479,7 +500,7 @@ def plot_cloudnet_feature_mask_data(collocated_data):
         ax.get_xticks(),
     )
     ax.set_title("Cloudnet")
-    
+    axis_datetime_formatter(ax)
     return fig, ax
 
 def plot_cloudnet_collocation_criteria_data(collocated_data):
@@ -559,7 +580,7 @@ def plot_cloudnet_collocation_criteria_data(collocated_data):
     #)
     ax.set_xlim([BOUND_lower, BOUND_upper])
     ax.set_title(None)
-    
+    axis_datetime_formatter(ax)
     return fig, ax
 
 
@@ -612,27 +633,6 @@ def plot_homogenised_data(collocated_data):
     return fig, ax
 
 
-print(f"loading data")
-collocated_data = event.load_with_joint_parameters(outer_parameters)
-print("data loaded succesfully")
-# svg-able
-for plot_func, savename in (
-    (plot_spatial_subset_atl09,"spatial_subset"), 
-    (plot_atl09_collocation_criteria_data, "atl09_criteria"), 
-    (plot_cloudnet_collocation_criteria_data, "cloudnet_criteria"), 
-    (plot_homogenised_data, "VCF"),
-):
-    f,a = plot_func(collocated_data)
-    f.savefig(f"{savename}.svg", format="svg", transparent=True)
-
-# png
-for plot_func, savename in (
-    (plot_atl09_feature_mask_data, "atl09_feature"),
-    (plot_cloudnet_feature_mask_data, "cloudnet_feature"),
-):
-    f,a = plot_func(collocated_data)
-    f.savefig(f"{savename}.png", dpi=600, transparent=True)
-
 
 def plot_colorbar():
     width_reduction_factor = 0.68
@@ -667,6 +667,28 @@ def plot_colorbar():
         bbox_inches="tight"
     )
 
+
+
+
+print(f"loading data")
+collocated_data = event.load_with_joint_parameters(outer_parameters)
+print("data loaded succesfully")
+# svg-able
+for plot_func, savename in (
+    (plot_spatial_subset_atl09,"spatial_subset"), 
+    (plot_atl09_collocation_criteria_data, "atl09_criteria"), 
+    (plot_cloudnet_collocation_criteria_data, "cloudnet_criteria"), 
+    (plot_homogenised_data, "VCF"),
+):
+    f,a = plot_func(collocated_data)
+    f.savefig(f"{savename}.svg", format="svg", transparent=True)
+
+# png
+for plot_func, savename in (
+    (plot_atl09_feature_mask_data, "atl09_feature"),
+    (plot_cloudnet_feature_mask_data, "cloudnet_feature"),
+):
+    f,a = plot_func(collocated_data)
+    f.savefig(f"{savename}.png", dpi=600, transparent=True)
+
 plot_colorbar()
-
-
